@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.11)  11 NOV 2023 12:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.11.11)  11 NOV 2023 16:45
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1645,25 +1645,8 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8] [9]
 Chapter 5.
-\openout4 = `fi-pdflatex.markdown.in'.
-
-Package markdown Info: Buffering markdown input into the temporary input file "fi-pdflatex.markdown.in" and scanning for the closing token sequence "\end{markdown*}" on input line 186.
-Package markdown Info: The ending token sequence was found on input line 217.
-Package markdown Info: Including markdown document "./fi-pdflatex.markdown.in" on input line 217.
-\g_tmpa_iow=\write13
-\openout13 = `fi-pdflatex.markdown.lua'.
-
-
-Package luabridge Info: Writing a helper Lua script to file
-(luabridge)             \markdownOptionHelperScriptFileName 
-
-
-Package luabridge Info: Executing a helper Lua script from file
-(luabridge)             \markdownOptionHelperScriptFileName 
-
-(|texlua ./fi-pdflatex.markdown.lua) (./_markdown_fi-pdflatex/407046a6664c1e3c1a3b435006932522.md.tex
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 10.
- (c:/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 186.
+(c:/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 Package microtype Info: Loading generic protrusion settings for font family
@@ -1671,34 +1654,30 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Overfull \hbox (45.27255pt too wide) in paragraph at lines 15--15
-\T1/qpl/m/n/12 (-20) mod-ule us-ing \T1/lmtt/m/n/12 cd .\src\main\resources\bthesis-provenancechain-digpat
+Overfull \hbox (23.54936pt too wide) in paragraph at lines 194--195
+[]| $\T1/lmtt/b/n/12 cd . \src \ main \ resources \ bthesis-[]provenancechain-[]digpat$ 
  []
 
 
-Overfull \hbox (187.45935pt too wide) in paragraph at lines 28--28
-[]\T1/qpl/m/n/12 (-20) Execute the cre-ated jar with \T1/lmtt/m/n/12 java -jar .\target\BThesis-ProvenanceChain-VERSION-shaded.jar 
+Overfull \hbox (0.62613pt too wide) in paragraph at lines 195--196
+[]\T1/qpl/m/n/12 (-20) Run \T1/lmtt/b/n/12 git submodule foreach git fetch --tags \T1/qpl/m/n/12 (-20) (There should
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+qpl on input line 30.
-(c:/texlive/2023/texmf-dist/tex/latex/tex-gyre/ts1qpl.fd
+
+Overfull \hbox (2.19571pt too wide) in paragraph at lines 196--197
+[]\T1/qpl/m/n/12 (-20) Finish by run-ning [][]\T1/lmtt/m/n/12 git submodule update --init --recursive 
+ []
+
+[10{c:/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
+LaTeX Font Info:    Trying to load font information for TS1+qpl on input line 208.
+ (c:/texlive/2023/texmf-dist/tex/latex/tex-gyre/ts1qpl.fd
 File: ts1qpl.fd 2009/09/25 v1.2 font definition file for TS1/qpl
-) [10{c:/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/texlive/2023/texmf-dist/fonts/enc/dvips/tex-gyre/q-ts1.enc}])
-Overfull \hbox (9.80788pt too wide) in paragraph at lines 37--218
-\T1/lmtt/m/n/12 bthesis.provenancechain.simulation \T1/qpl/m/n/12 (-20) and \T1/lmtt/m/n/12 bthesis.metageneration\T1/qpl/m/n/12 (-20) ,
- []
-
-
-Overfull \hbox (221.81378pt too wide) in paragraph at lines 37--218
-\T1/qpl/m/n/12 (-20) while the re-quired files are lo-cated in the sub-mod-ule \T1/lmtt/m/n/12 .\src\main\resources\bthesis-provenancechain-digpat
- []
-
-[11]
+) [11{c:/texlive/2023/texmf-dist/fonts/enc/dvips/tex-gyre/q-ts1.enc}] [12]
 Chapter 6.
-[12]
+[13]
 Overfull \vbox (4.13467pt too high) has occurred while \output is active []
 
- [13] [14] (./fi-pdflatex.aux)
+ [14] [15] (./fi-pdflatex.aux)
  ***********
 LaTeX2e <2023-11-01>
 L3 programming layer <2020/03/25>
@@ -1710,18 +1689,18 @@ Package logreq Info: Writing requests to 'fi-pdflatex.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 41987 strings out of 474272
- 811744 string characters out of 5751547
+ 41990 strings out of 474272
+ 811213 string characters out of 5751547
  1935533 words of memory out of 5000000
- 63211 multiletter control sequences out of 15000+600000
- 625776 words of font info for 147 fonts, out of 8000000 for 9000
+ 63208 multiletter control sequences out of 15000+600000
+ 626234 words of font info for 149 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  100i,7n,103p,1268b,5328s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtt12.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtti10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qhvb.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qhvr.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplb.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplr.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplri.pfb>
-Output written on fi-pdflatex.pdf (23 pages, 301423 bytes).
+<c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtt12.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtti10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qhvb.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qhvr.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplb.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplr.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qplri.pfb>
+Output written on fi-pdflatex.pdf (24 pages, 325422 bytes).
 PDF statistics:
- 334 PDF objects out of 1000 (max. 8388607)
- 289 compressed objects within 3 object streams
- 64 named destinations out of 1000 (max. 500000)
- 41236 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 357 PDF objects out of 1000 (max. 8388607)
+ 309 compressed objects within 4 object streams
+ 76 named destinations out of 1000 (max. 500000)
+ 41748 words of extra memory for PDF output out of 42996 (max. 10000000)
 

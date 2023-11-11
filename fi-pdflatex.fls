@@ -639,22 +639,16 @@ INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/tex-gyre/ec-qplr.tfm
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/tex-gyre/ec-qplb.tfm
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/tex-gyre/ec-qplr-sc.tfm
 INPUT c:/texlive/2023/texmf-dist/fonts/enc/dvips/tex-gyre/q-ec-sc.enc
-OUTPUT fi-pdflatex.markdown.in
-INPUT ./fi-pdflatex.markdown.in
-OUTPUT fi-pdflatex.markdown.lua
-INPUT texlua ./fi-pdflatex.markdown.lua
-INPUT ./_markdown_fi-pdflatex/407046a6664c1e3c1a3b435006932522.md.tex
-INPUT ./_markdown_fi-pdflatex/407046a6664c1e3c1a3b435006932522.md.tex
-INPUT ./_markdown_fi-pdflatex/407046a6664c1e3c1a3b435006932522.md.tex
 INPUT c:/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 INPUT c:/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 INPUT c:/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/lm/ec-lmtt12.tfm
+INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/lm/ec-lmtk10.tfm
+INPUT c:/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc
 INPUT c:/texlive/2023/texmf-dist/tex/latex/tex-gyre/ts1qpl.fd
 INPUT c:/texlive/2023/texmf-dist/tex/latex/tex-gyre/ts1qpl.fd
 INPUT c:/texlive/2023/texmf-dist/tex/latex/tex-gyre/ts1qpl.fd
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/tex-gyre/ts1-qplr.tfm
-INPUT c:/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc
 INPUT c:/texlive/2023/texmf-dist/fonts/enc/dvips/tex-gyre/q-ts1.enc
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/lm/ec-lmtti10.tfm
 INPUT c:/texlive/2023/texmf-dist/fonts/tfm/public/tex-gyre/ec-qplri.tfm
@@ -665,6 +659,7 @@ INPUT ./fi-pdflatex.out
 INPUT ./fi-pdflatex.out
 INPUT fi-pdflatex.run.xml
 OUTPUT fi-pdflatex.run.xml
+INPUT c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtk10.pfb
 INPUT c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtt12.pfb
 INPUT c:/texlive/2023/texmf-dist/fonts/type1/public/lm/lmtti10.pfb
 INPUT c:/texlive/2023/texmf-dist/fonts/type1/public/tex-gyre/qhvb.pfb

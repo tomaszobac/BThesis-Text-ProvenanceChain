@@ -7,7 +7,9 @@
 ### Init simulation files
 In order for the simulated environment to run, you need to pull the required files
 1. Open the cloned repo in the console
-2. Move to the submodule using `cd .\src\main\resources\bthesis-provenancechain-digpat`
+2. Move to the submodule using
+`cd .\src\main\resources\bthesis-provenancechain-digpat`
+
 3. Run `git submodule foreach git fetch --tags` (There should be no output)
 
 4. Finish by running `git submodule update --init --recursive`

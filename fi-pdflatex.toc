@@ -23,9 +23,9 @@
 \contentsline {section}{\numberline {5.1}Set-up}{10}{section.5.1}%
 \contentsline {subsection}{\numberline {5.1.1}Clone the repo}{10}{subsection.5.1.1}%
 \contentsline {subsection}{\numberline {5.1.2}Init simulation files}{10}{subsection.5.1.2}%
-\contentsline {section}{\numberline {5.2}Building}{10}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Omitting the simulated environment}{11}{section.5.3}%
-\contentsline {chapter}{\numberline {6}\bfseries Real life application}{12}{chapter.6}%
+\contentsline {section}{\numberline {5.2}Building}{11}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Omitting the simulated environment}{12}{section.5.3}%
+\contentsline {chapter}{\numberline {6}\bfseries Real life application}{13}{chapter.6}%
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
@@ -35,7 +35,7 @@
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{Bibliography}{14}{chapter*.10}%
+\contentsline {chapter}{Bibliography}{15}{chapter*.10}%
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
 \babel@toc {english}{}\relax 
