@@ -114,17 +114,36 @@ have a diploma under my belt. Wish me luck!
 
 \chapter{Provenance}
 \shorthandoff{-}
-Provenance refers to the collective information about the history or origin of something, especially its ownership or location history. It is often used in contexts where it is essential to trace the history of an object, idea, or practice to establish its authenticity, origin, and how it was handled through time. For example, in literature, provenance can relate to the history of a manuscript or a book. Knowing who owned a rare manuscript, where it was kept, and how it was passed down through generations can shed light on its historical importance and authenticity. In the digital realm, provenance refers to the documentation of the history of data, including its origins, processing, and storage. This is important in areas like scientific research, where tracking the origin and modifications of data ensures its reliability and reproducibility. All this information and data mentioned in the examples is collectively called provenance.
+Provenance refers to the collective information about the history or origin of something, especially its ownership or location history. It is often used in contexts where it is essential to trace the history of an object, idea, or practice to establish its authenticity, origin, and how it was handled through time. For example, in literature, provenance can relate to the history of a manuscript or a book. Knowing who owned a rare manuscript, where it was kept, and how it was passed down through generations can shed light on its historical importance and authenticity.
+
+In the digital realm, provenance refers to the documentation of the history of data, including its origins, processing, and storage. This is particularly significant, especially in fields such as scientific research, where tracking the origin and modifications of data ensures its reliability and reproducibility. Provenance is the term used to describe all the information and data referred to in the abovementioned examples. It is the collective name given to this type of data.
 \shorthandon{-}
 
 \section{PROV-DM}
 \shorthandoff{-}
-In order to represent the provenance in a format that can be easily shareable and processable, the W3C PROV-DM (Provenance Data Model) standard was created. The official documentation states, "PROV-DM is the conceptual data model that forms a basis for the W3C provenance (PROV) family of specifications."  PROV-DM is organized into multiple parts called components. The main three components are Entities, Activities, and Agents. Entities hold information about the physical, digital, or other objects, such as the provenance's main subject or other subjects related to it. Activities describe the actions and processes done on or with the entities. As the documentation mentions, "Activities and entities are associated with each other in two different ways: activities utilize entities, and activities produce entities." The last of the main components are Agents, which are responsible for Entities and Activities. In simplified terms, the relation can be imagined as the Agent is the one who did some Activity on an Entity. Relations between these can be tracked thanks to other connecting components such as wasDerivedFrom, wasGeneratedBy, or used. In the end, thanks to the structure of these components, the whole model works as a directed graph.
+In order to represent the provenance in a format that can be easily shared and processed, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM is structured as a directed graph, representing provenance through nodes and edges. 
+
+Nodes in this graph are known as Entities, Activities, and Agents, each playing a distinct role. Entities refer to physical, digital, or other objects central to or associated with the provenance. Activities encompass actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities.
+
+The edges in this graph refer to the relations between these nodes. Examples include 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used,' which help map out the model's interactions.
+
+Moreover, the PROV-DM standard includes a concept known as 'bundles.' These are used to group sets of provenance information, enabling the encapsulation of various model elements. This addition allows for a more nuanced and organized representation of provenance data, enhancing the model's capability to be easily shared and processed.
 \shorthandon{-}
 
 \subsection{PROV-N}
 \shorthandoff{-}
-PROV-N is part of the W3C PROV family of documents for provenance modeling. It is essentially a human-readable textual format for describing the provenance of digital resources. A PROV-N document is a container for provenance descriptions consisting of namespace declarations, expressions, and bundles. It supports extension, allowing for the inclusion of additional attributes and the definition of new expressions. Its content is encoded in UTF-8, which ensures universal readability and accessibility. The main components are distinguished by unique identification, following a QualifiedName notation consisting of a namespace URI, the prefix for easier namespace readability, and the local part. For example, we can look at one of the entities from the used documents.
+PROV-N is a vital component of the W3C PROV suite, designed to model provenance and represent it in a human-readable textual format. This format organizes provenance information into three main sections: namespace declarations, statements, and bundles. 
+
+Namespace declarations simplify the identification of entities, activities, and agents by providing a shorthand prefix to a longer namespace URI. For instance, an entity might be identified using a QualifiedName, such as "ns\_surgery:sampleConnector." This notation combines a namespace URI, a readable prefix, and the local part, ensuring that each component is uniquely identified and easily referenced. Namespaces are declared as follows:
+
+\begin{verbatim}
+
+prefix ns_surgery <ns_surgery_URI>
+prefix ns_pathology <ns_pathology_URI>
+
+\end{verbatim}
+
+Statements in PROV-N describe the various provenance elements and their relationships. They can range from simple declarations to complex narratives explaining how different entities interact. For example, an entity might be described as "entity(ns\_surgery:sampleConnector)" with attributes detailing its characteristics:
 
 \begin{verbatim}
 
@@ -136,12 +155,42 @@ entity(ns_surgery:sampleConnector, [
     
 \end{verbatim}
 
-This entity has an identification of \textit{sampleConnector} with the prefix ns\_surgery and a collection of attributes, where pairs of QualifiedName and Value identify each attribute. The PROV-N documents will be the only ones used in this thesis.
+Bundles, as mentioned in "1.1", allow for grouping related provenance information. This organization aids in managing complex provenance scenarios, where it is crucial to encapsulate different aspects of the provenance in distinct, manageable units. The finished document, with declared namespaces and a bundle encapsulating its statements, could look like this example:
+
+\begin{verbatim}
+
+document
+  prefix ns_surgery <ns_surgery_URI>
+
+  bundle ns_surgery:01_sample_acquisition.provn
+    prefix ns_surgery <ns_surgery_URI>
+    prefix ns_pathology <ns_pathology_URI>
+    prefix cpm <cpm_URI>
+
+    entity(ns_surgery:sampleConnector,[
+        prov:type='cpm:senderConnector',
+        cpm:receiverBundleId='ns_pathology:02_scanning.provn',
+        cpm:receiverServiceUri="#URI#"
+    ])
+  endBundle
+endDocument
+
+\end{verbatim}
+
+The flexibility of PROV-N is enhanced through its extension support. Users can add custom attributes and define new statements, tailoring the format to specific needs. This adaptability makes PROV-N an ideal choice for various applications, from academic research to industry practices.
 \shorthandon{-}
 
 \section{Provenance chain}
 \shorthandoff{-}
-The PROV-N documents used in the implementation of this thesis were generated and provided by the thesis supervisor using the "implementation of another thesis". These documents follow a set structure and naming rules described in the standard being developed by the supervisor and his colleagues. Each document contains a single Bundle encompassing all components present. The main structure of the directed graph, created from the bundle's components, consists of three Entity types. The two entry points of the bundle are Entities with types cpm:backwardConnector and cpm:forwardConnector. The backwardConnector points to a forwardConnector with the same identification in the previous bundle. Conversely, the forwardConnector points to a backwardConnector with the same identification in the following bundle. The third Entity has type cpm:currentConnector and points to the current bundle. 
+In the context of W3C PROV modeling, the provenance chain is a sequence of interconnected bundles, each encapsulating a graph with a semi-defined structure. Each bundle in the chain contains a directed graph composed of three main types of entities designed to establish connections within and between bundles.
+
+At the core of this structure are two entry point entities: backwardConnector and forwardConnector. The backwardConnector links to a forwardConnector in the preceding bundle, creating a backward traversal path. Conversely, the forwardConnector establishes a forward link to a backwardConnector in the subsequent bundle. This arrangement ensures a continuous and traceable path through the chain of bundles, allowing for easy navigation.
+
+Additionally, each bundle includes a currentConnector entity. This entity is pivotal in identifying the current bundle within the chain, providing a reference point for the contained provenance information.
+
+While the example given simplifies the structure, it is important to note that, in practice, a single bundle can contain multiple connectors of each type. This multiplicity allows for connections to more than one bundle on either side of the traversal path, thereby accommodating complex provenance scenarios. The ability to link multiple bundles through various connectors enhances the flexibility and depth of the provenance chain, enabling a more detailed and comprehensive representation of the provenance.
+
+With its series of linked bundles and partially predefined configuration, this chain structure offers a robust framework for documenting, tracking, and analyzing the provenance.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -150,11 +199,24 @@ The PROV-N documents used in the implementation of this thesis were generated an
   \caption{Connection of two provenance bundles}
   \label{fig:bundleconnection}
 \end{figure}
-
- It should be mentioned that this is a simple example, and a single bundle can have multiple connectors of each type pointing to more than one bundle on each side of the traversal.
 \shorthandon{-}
 
-\section{Traversing the provenance chain}
+
+\chapter{Design}
+\section{Structure}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
+
+\subsection{Components}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
+
+\section{Simulation}
+\shorthandoff{-}
+The PROV-N documents will be the only ones used in this thesis.
+
+The PROV-N documents used in the implementation of this thesis were generated and provided by the thesis supervisor using the "implementation of another thesis". These documents follow a set structure and naming rules described in the standard being developed by the supervisor and his colleagues. Each document contains a single Bundle encompassing all components present.
+\shorthandon{-}
+
+\section{Algorithm}
 \shorthandoff{-}
 As mentioned before, the main structure of a bundle consists of three Entities with connector types. These are connected using the wasDerivedFrom statement, effectively creating a traversable path through the bundle. If the target of the traversal is the main Activity of the current bundle, it can be reached using, for example, the wasGeneratedBy or used statement. The same applies to an Agent, which can be reached using the wasAttributedTo statement. As an example, the Figure \ref{fig:bundleexample} is an excerpt from the PROV-N document converted into a graph.
 
@@ -269,16 +331,7 @@ entity(ns_pathology:pathologicalDiagnosisConnector,
 cpm:receiverBundleId='ns_biobank:03_biobanking.provn'
     
 \end{verbatim}
-
 \shorthandon{-}
-
-
-\chapter{Planning}
-\section{Java and Python library differences}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
-\section{Drafting}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
 
 
 \chapter{Implementation}
@@ -309,25 +362,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
 \shorthandon{-}
 
-\section{Components}
+\section{Runtime}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
 
-Nunc sagittis id purus quis facilisis. Etiam ullamcorper massa ut justo volutpat, quis malesuada lectus fermentum. Maecenas orci augue, dictum vel risus ut, finibus tincidunt magna. Praesent semper vehicula nulla, eu dignissim elit aliquet in. Mauris ultricies tortor sed justo congue, eu pretium sapien egestas. Aliquam erat volutpat. Duis elementum urna nec felis pharetra, egestas aliquam turpis aliquam. Donec commodo, felis vitae pulvinar interdum, nisl felis feugiat est, vel dictum augue lacus nec elit. Etiam a cursus ligula. Sed luctus nisl at rhoncus ullamcorper. Suspendisse vitae sapien porttitor, auctor quam ac, volutpat tellus. Phasellus cursus, enim vel tristique porttitor, velit dolor viverra sapien, eu lacinia elit erat cursus augue. Fusce sodales venenatis lacus, eget rutrum lorem bibendum vel.
-
-\section{Simulation}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
-
-Nunc sagittis id purus quis facilisis. Etiam ullamcorper massa ut justo volutpat, quis malesuada lectus fermentum. Maecenas orci augue, dictum vel risus ut, finibus tincidunt magna. Praesent semper vehicula nulla, eu dignissim elit aliquet in. Mauris ultricies tortor sed justo congue, eu pretium sapien egestas. Aliquam erat volutpat. Duis elementum urna nec felis pharetra, egestas aliquam turpis aliquam. Donec commodo, felis vitae pulvinar interdum, nisl felis feugiat est, vel dictum augue lacus nec elit. Etiam a cursus ligula. Sed luctus nisl at rhoncus ullamcorper. Suspendisse vitae sapien porttitor, auctor quam ac, volutpat tellus. Phasellus cursus, enim vel tristique porttitor, velit dolor viverra sapien, eu lacinia elit erat cursus augue. Fusce sodales venenatis lacus, eget rutrum lorem bibendum vel.
-
-\section{Algorithm}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
-
-Nunc sagittis id purus quis facilisis. Etiam ullamcorper massa ut justo volutpat, quis malesuada lectus fermentum. Maecenas orci augue, dictum vel risus ut, finibus tincidunt magna. Praesent semper vehicula nulla, eu dignissim elit aliquet in. Mauris ultricies tortor sed justo congue, eu pretium sapien egestas. Aliquam erat volutpat. Duis elementum urna nec felis pharetra, egestas aliquam turpis aliquam. Donec commodo, felis vitae pulvinar interdum, nisl felis feugiat est, vel dictum augue lacus nec elit. Etiam a cursus ligula. Sed luctus nisl at rhoncus ullamcorper. Suspendisse vitae sapien porttitor, auctor quam ac, volutpat tellus. Phasellus cursus, enim vel tristique porttitor, velit dolor viverra sapien, eu lacinia elit erat cursus augue. Fusce sodales venenatis lacus, eget rutrum lorem bibendum vel.
-
-\section{Deployment}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
-
-Nunc sagittis id purus quis facilisis. Etiam ullamcorper massa ut justo volutpat, quis malesuada lectus fermentum. Maecenas orci augue, dictum vel risus ut, finibus tincidunt magna. Praesent semper vehicula nulla, eu dignissim elit aliquet in. Mauris ultricies tortor sed justo congue, eu pretium sapien egestas. Aliquam erat volutpat. Duis elementum urna nec felis pharetra, egestas aliquam turpis aliquam. Donec commodo, felis vitae pulvinar interdum, nisl felis feugiat est, vel dictum augue lacus nec elit. Etiam a cursus ligula. Sed luctus nisl at rhoncus ullamcorper. Suspendisse vitae sapien porttitor, auctor quam ac, volutpat tellus. Phasellus cursus, enim vel tristique porttitor, velit dolor viverra sapien, eu lacinia elit erat cursus augue. Fusce sodales venenatis lacus, eget rutrum lorem bibendum vel.
+\section{Problems during implementation}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
 
 
 \chapter{Manual}
