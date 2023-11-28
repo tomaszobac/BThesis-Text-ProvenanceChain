@@ -123,7 +123,7 @@ In the digital realm, provenance refers to the documentation of the history of d
 \shorthandoff{-}
 In order to represent the provenance in a format that can be easily shared and processed, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM is structured as a directed graph, representing provenance through nodes and edges. 
 
-Nodes in this graph are known as Entities, Activities, and Agents, each playing a distinct role. Entities refer to physical, digital, or other objects central to or associated with the provenance. Activities encompass actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities.
+Nodes in this graph are defined as Entities, Activities, and Agents, each playing a distinct role. Entities refer to physical, digital, or other objects central to or associated with the provenance. Activities encompass actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities.
 
 The edges in this graph refer to the relations between these nodes. Examples include 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used,' which help map out the model's interactions.
 
@@ -180,7 +180,7 @@ endDocument
 The flexibility of PROV-N is enhanced through its extension support. Users can add custom attributes and define new statements, tailoring the format to specific needs. This adaptability makes PROV-N an ideal choice for various applications, from academic research to industry practices.
 \shorthandon{-}
 
-\section{Provenance chain}
+\section{Provenance chain} \label{s-provchain}
 \shorthandoff{-}
 In the context of W3C PROV modeling, the provenance chain is a sequence of interconnected bundles, each encapsulating a graph with a semi-defined structure. Each bundle in the chain contains a directed graph composed of three main types of entities designed to establish connections within and between bundles.
 
@@ -200,138 +200,86 @@ With its series of linked bundles and partially predefined configuration, this c
   \label{fig:bundleconnection}
 \end{figure}
 \shorthandon{-}
-
+TODO
 
 \chapter{Design}
+\shorthandoff{-}
+This chapter delves into the architecture and logic of the library, which was developed as an implementation part of this thesis. The chapter has three main objectives. Firstly, it aims to provide a clear and concise overview of the structure of the library and its components, including their respective roles in the library's lifecycle. Secondly, it discusses the simulated environment of a real-world distribution and how it works. Finally, it describes the primary logic used for traversing a provenance chain. It is crucial to explain these specific details to understand the technical implementation described in the succeeding chapter. 
+\shorthandon{-}
 \section{Structure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
+\shorthandoff{-}
+At its core, the implementation is designed as a modular, multi-component library. Each component serves a distinct role but contributes to cohesive functionality. This modular approach facilitates easy maintenance and scalability. Central to this structure is a layered architecture, segregating the library operations into distinct layers - data retrieval, processing, and presentation. 
+The data retrieval layer is responsible for acquiring the PROV-N data, depending on the type of storage, and deserializing it into a unified type. 
+The processing layer handles the traversal of the provenance chain as well as the traversal of the directed graph inside each PROV-N document. It is also responsible for evaluating the documents' integrity and retrieving the relevant provenance data.
+Finally, the presentation layer provides the interface for user interaction, enabling command inputs and displaying results on the command line.
+\shorthandon{-}
 
 \subsection{Components}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
+\shorthandoff{-}
+The library's components are separated into four main parts.
+\begin{enumerate}
+    \item \textbf{Main UI:}
+        This component is tasked with the preparation of resources for the library and providing a user interface on the command line, where the user can input commands and view the results of the entered queries. The user interface also provides quality-of-life functions, such as command auto-completion, command history, or in-command query history.
+    \item \textbf{Configuration:}
+        This set of components retrieves data from a configuration JSON file and passes it to the library.
+    \item \textbf{Tools:}
+        This set of components serves as a toolset for the library. The first set of tools retrieves and deserializes PROV-N documents depending on their storage type. It currently supports retrieving files saved locally in the file system and remotely in GitLab repositories. 
+        The second set of tools is used to resolve persistent identifiers stored in the relevant navigation table.
+        The third is used for retrieving hash values from the corresponding meta-provenance, and the last is used for hash creation.
+    \item \textbf{Main logic:}
+        This last set of components handles the data processing. It traverses the provenance chain and retrieves the user-specified data. It also assures the correctness of the traversed chain by evaluating the integrity of the document using its hash values stored in the corresponding meta-provenance and comparing it to new hash values created using the last set of tools.
+\end{enumerate}
+\shorthandon{-}
 
 \section{Simulation}
 \shorthandoff{-}
-The PROV-N documents will be the only ones used in this thesis.
-
-The PROV-N documents used in the implementation of this thesis were generated and provided by the thesis supervisor using the "implementation of another thesis". These documents follow a set structure and naming rules described in the standard being developed by the supervisor and his colleagues. Each document contains a single Bundle encompassing all components present.
+For the implementation to simulate a real-world environment, some regulations had to be established specifically for this thesis. The PROV-N serialization will be the only one used in this thesis. The PROV-N documents used in the implementation were generated and provided by the thesis supervisor using the "cite thesis". These documents follow a predefined structure and naming rules described in the standard currently being developed by the supervisor and his colleagues. The implementation will also include a package for generating meta-provenance, which will be used for the provided documents. Lastly, the resolution of the persistent identifiers will be done with an in-memory navigation table created during the library's initialization process containing all of the provided documents.
 \shorthandon{-}
 
 \section{Algorithm}
 \shorthandoff{-}
-As mentioned before, the main structure of a bundle consists of three Entities with connector types. These are connected using the wasDerivedFrom statement, effectively creating a traversable path through the bundle. If the target of the traversal is the main Activity of the current bundle, it can be reached using, for example, the wasGeneratedBy or used statement. The same applies to an Agent, which can be reached using the wasAttributedTo statement. As an example, the Figure \ref{fig:bundleexample} is an excerpt from the PROV-N document converted into a graph.
+As mentioned before in section \ref{s-provchain}, the main structure of a bundle consists of three Entities with predefined connector types connected by the wasDerivedFrom statements. As an example of the traversal, assume the algorithm has already traversed one bundle and is now entering a succeeding one with its graph's structure, as shown in Figure.
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=12.7cm]{fithesis/images/examplebigger.png}
+    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
   \end{center}
   \caption{Excerpt from a PROV-N document}
   \label{fig:bundleexample}
 \end{figure}
-
-The document itself would be structured as follows.
-
-\begin{verbatim}
-
-entity(ns_surgery:sampleConnector,
-    [prov:type='cpm:backwardConnector',
-    cpm:senderBundleId=
-        'ns_surgery:01_sample_acquisition.provn', 
-    cpm:senderServiceUri="#URI#"])
-entity(ns_pathology:Sample, 
-    [prov:type='cpm:currentConnector',
-    cpm:currentBundle='ns_pathology:02_scanning.provn'])
-entity(ns_pathology:pathologicalDiagnosisConnector, 
-    [prov:type='cpm:forwardConnector',
-    cpm:receiverBundleId='ns_biobank:03_biobanking.provn', 
-    cpm:receiverServiceUri="#URI#"])
-agent(ns_pathology:surgicalDepartment, 
-    [prov:type='cpm:senderAgent', cpm:contactIdPid=""])
-agent(ns_pathology:biobank, 
-    [prov:type='cpm:receiverAgent', cpm:contactIdPid=""])
-activity(ns_pathology:dataGeneration, -, -, 
-    [prov:type=
-        'cpm:mainActivity', prov:type='cpm:sampleHandling',
-    prov:type='cpm:dataGeneration', 
-    dct:hasPart='ns_pathology:macroscopy', 
-    dct:hasPart='ns_pathology:slicing',
-    dct:hasPart='ns_pathology:staining', 
-    dct:hasPart='ns_pathology:scanning',
-    dct:hasPart='ns_pathology:examination'])
-wasDerivedFrom(ns_pathology:Sample, 
-    ns_surgery:sampleConnector, -, -, -)
-wasDerivedFrom(ns_pathology:pathologicalDiagnosisConnector, 
-    ns_pathology:Sample, -, -, -)
-wasAttributedTo(ns_surgery:sampleConnector, 
-    ns_pathology:surgicalDepartment)
-wasAttributedTo(ns_pathology:pathologicalDiagnosisConnector, 
-    ns_pathology:biobank)
-wasGeneratedBy(ns_pathology:pathologicalDiagnosisConnector, 
-    ns_pathology:dataGeneration, -)
-used(ns_pathology:dataGeneration, ns_pathology:Sample, -)
-    
-\end{verbatim}
-
-Considering we arrived from the bundle 01\verb|_|sample\verb|_|acquisition, the next step would be to use a wasDerivedFrom statement where the backwardConnector is in the role of a used Entity. 
-
-\begin{verbatim}
-
-cpm:senderBundleId=
-    'ns_surgery:01_sample_acquisition.provn'
-
-entity(ns_surgery:sampleConnector,
-    [prov:type='cpm:backwardConnector',
-    cpm:senderBundleId=
-        'ns_surgery:01_sample_acquisition.provn', 
-    cpm:senderServiceUri="#URI#"])
-
-wasDerivedFrom(ns_pathology:Sample, 
-    ns_surgery:sampleConnector, -, -, -)
-    
-\end{verbatim}
-
-After moving to the currentConnector, the process can be either repeated or using the used statement, the main Activity of the current bundle can be accessed.\\\\Proceed: 
-\begin{verbatim}
-entity(ns_pathology:Sample, 
-    [prov:type='cpm:currentConnector',
-    cpm:currentBundle='ns_pathology:02_scanning.provn'])
-
-wasDerivedFrom(ns_pathology:pathologicalDiagnosisConnector, 
-    ns_pathology:Sample, -, -, -)
-    
-\end{verbatim}
-Retrieve Activity:
-\begin{verbatim}
-entity(ns_pathology:Sample, 
-    [prov:type='cpm:currentConnector',
-    cpm:currentBundle='ns_pathology:02_scanning.provn'])
-
-used(ns_pathology:dataGeneration, ns_pathology:Sample, -)
-
-activity(ns_pathology:dataGeneration, -, -, 
-    [prov:type=
-        'cpm:mainActivity', prov:type='cpm:sampleHandling',
-    prov:type='cpm:dataGeneration', 
-    dct:hasPart='ns_pathology:macroscopy', 
-    dct:hasPart='ns_pathology:slicing',
-    dct:hasPart='ns_pathology:staining', 
-    dct:hasPart='ns_pathology:scanning',
-    dct:hasPart='ns_pathology:examination'])
-    
-\end{verbatim}
-
-After reaching the end of the bundle's graph, we can enter another bundle by looking into the attributes of the forwardConnector to find where it is pointing (also seen in the Figure \ref{fig:bundleconnection}).
-
-\begin{verbatim}
-
-entity(ns_pathology:pathologicalDiagnosisConnector, 
-    [prov:type='cpm:forwardConnector',
-    cpm:receiverBundleId='ns_biobank:03_biobanking.provn', 
-    cpm:receiverServiceUri="#URI#"])
-
-cpm:receiverBundleId='ns_biobank:03_biobanking.provn'
-    
-\end{verbatim}
 \shorthandon{-}
+
+Considering the algorithm arrived from the bundle 01\_sample\_acquisition,
+the next step is to use a wasDerivedFrom statement where the
+backwardConnector is in the role of a used Entity.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+  \end{center}
+  \caption{Excerpt from a PROV-N document}
+  \label{fig:bundleexample2}
+\end{figure}
+
+After moving to the currentConnector, the algorithm again finds a wasDerivedFrom statement where the currentConnector is in the role of a used Entity, and the forwardConnector is in the role of a generated Entity.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+  \end{center}
+  \caption{Excerpt from a PROV-N document}
+  \label{fig:bundleexample3}
+\end{figure}
+
+After reaching the end of the bundle's graph, the algorithm can enter another bundle by looking into the current forwardConnector's attributes, retrieving the succeeding bundle's identifier (Figure 1.1), and executing the whole process again.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+  \end{center}
+  \caption{Excerpt from a PROV-N document}
+  \label{fig:bundleexample4}
+\end{figure}
 
 
 \chapter{Implementation}
