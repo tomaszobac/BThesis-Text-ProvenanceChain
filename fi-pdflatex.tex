@@ -119,20 +119,22 @@ Provenance refers to the collective information about the history or origin of s
 In the digital realm, provenance refers to the documentation of the history of data, including its origins, processing, and storage. This is particularly significant, especially in fields such as scientific research, where tracking the origin and modifications of data ensures its reliability and reproducibility. Provenance is the term used to describe all the information and data referred to in the abovementioned examples. It is the collective name given to this type of data.
 \shorthandon{-}
 
-\section{PROV-DM}
+\section{PROV-DM} \label{provdm}
 \shorthandoff{-}
-In order to represent the provenance in a format that can be easily shared and processed, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM is structured as a directed graph, representing provenance through nodes and edges. 
+In order to enable the inter-operable interchange of provenance information, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM represents provenance as a directed graph through nodes and edges. 
 
-Nodes in this graph are defined as Entities, Activities, and Agents, each playing a distinct role. Entities refer to physical, digital, or other objects central to or associated with the provenance. Activities encompass actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities.
+Nodes in this graph represent Entities, Activities, and Agents, each playing a distinct role. Entities represent a physical, digital, or other objects central to or associated with the provenance. Activities represent actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities. Additionally each node has a unique identifier which clearly identifies it in the current provenance graph.
 
-The edges in this graph refer to the relations between these nodes. Examples include 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used,' which help map out the model's interactions.
+The edges in this graph represent the relations between these nodes. Examples include 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used,' which help map out the model's interactions.
 
-Moreover, the PROV-DM standard includes a concept known as 'bundles.' These are used to group sets of provenance information, enabling the encapsulation of various model elements. This addition allows for a more nuanced and organized representation of provenance data, enhancing the model's capability to be easily shared and processed.
+Moreover, the PROV-DM standard includes a concept known as 'Bundles'. These are used to group sets of provenance information, enabling the encapsulation of various model elements. This addition allows for a more nuanced and organized representation of provenance data, enhancing the model's capability to be easily shared and processed. Same as with the nodes in the graph, a Bundle also has a unique identifier, which allows it to be represented in a  for example parent or meta provenance, effectively allowing creation of provenance of a provenance.
+
+The flexibility of PROV-DM is enhanced through its extension support. Users can define new nodes and add custom attributes. This adaptability makes PROV-DM an ideal choice for various applications, from academic research to industry practices.
 \shorthandon{-}
 
 \subsection{PROV-N}
 \shorthandoff{-}
-PROV-N is a vital component of the W3C PROV suite, designed to model provenance and represent it in a human-readable textual format. This format organizes provenance information into three main sections: namespace declarations, statements, and bundles. 
+PROV-N is a vital component of the W3C PROV suite, designed to represent it in a human-readable textual format. This format organizes provenance information into three main sections: namespace declarations, statements, and bundles. 
 
 Namespace declarations simplify the identification of entities, activities, and agents by providing a shorthand prefix to a longer namespace URI. For instance, an entity might be identified using a QualifiedName, such as "ns\_surgery:sampleConnector." This notation combines a namespace URI, a readable prefix, and the local part, ensuring that each component is uniquely identified and easily referenced. Namespaces are declared as follows:
 
@@ -143,19 +145,22 @@ prefix ns_pathology <ns_pathology_URI>
 
 \end{verbatim}
 
-Statements in PROV-N describe the various provenance elements and their relationships. They can range from simple declarations to complex narratives explaining how different entities interact. For example, an entity might be described as "entity(ns\_surgery:sampleConnector)" with attributes detailing its characteristics:
+Statements in PROV-N describe the provenance structure and it's relationships. They can range from simple declarations to complex narratives explaining how different entities interact. For example, an entity might be described as "entity(ns\_surgery:sampleConnector)" with attributes detailing its characteristics:
 
 \begin{verbatim}
 
 entity(ns_surgery:sampleConnector, [
-    prov:type='cpm:forwardConnector', 
-    cpm:receiverBundleId='ns_pathology:02_scanning.provn', 
-    cpm:receiverServiceUri="#URI#"
+    prov:type=
+        'cpm:forwardConnector', 
+    cpm:receiverBundleId=
+        'ns_pathology:02_scanning.provn', 
+    cpm:receiverServiceUri=
+        "#URI#"
     ])
     
 \end{verbatim}
 
-Bundles, as mentioned in "1.1", allow for grouping related provenance information. This organization aids in managing complex provenance scenarios, where it is crucial to encapsulate different aspects of the provenance in distinct, manageable units. The finished document, with declared namespaces and a bundle encapsulating its statements, could look like this example:
+Bundles, as mentioned in \ref{provdm}, allow for grouping related provenance information. This organization aids in managing complex provenance scenarios, where it is crucial to encapsulate different aspects of the provenance in distinct, manageable units. The finished document, with declared namespaces and a bundle encapsulating its statements, could look like this example:
 
 \begin{verbatim}
 
@@ -168,29 +173,24 @@ document
     prefix cpm <cpm_URI>
 
     entity(ns_surgery:sampleConnector,[
-        prov:type='cpm:senderConnector',
-        cpm:receiverBundleId='ns_pathology:02_scanning.provn',
-        cpm:receiverServiceUri="#URI#"
+        prov:type=
+            'cpm:senderConnector',
+        cpm:receiverBundleId=
+            'ns_pathology:02_scanning.provn',
+        cpm:receiverServiceUri=
+            "#URI#"
     ])
   endBundle
 endDocument
 
 \end{verbatim}
-
-The flexibility of PROV-N is enhanced through its extension support. Users can add custom attributes and define new statements, tailoring the format to specific needs. This adaptability makes PROV-N an ideal choice for various applications, from academic research to industry practices.
 \shorthandon{-}
 
 \section{Provenance chain} \label{s-provchain}
 \shorthandoff{-}
-In the context of W3C PROV modeling, the provenance chain is a sequence of interconnected bundles, each encapsulating a graph with a semi-defined structure. Each bundle in the chain contains a directed graph composed of three main types of entities designed to establish connections within and between bundles.
+The provenance chain is a sequence of interconnected Bundles, each encapsulating a graph consisting of a backbone with pre-defined structure and a scenario specific information, which is attached to the backbone in a standardized way. 
 
-At the core of this structure are two entry point entities: backwardConnector and forwardConnector. The backwardConnector links to a forwardConnector in the preceding bundle, creating a backward traversal path. Conversely, the forwardConnector establishes a forward link to a backwardConnector in the subsequent bundle. This arrangement ensures a continuous and traceable path through the chain of bundles, allowing for easy navigation.
-
-Additionally, each bundle includes a currentConnector entity. This entity is pivotal in identifying the current bundle within the chain, providing a reference point for the contained provenance information.
-
-While the example given simplifies the structure, it is important to note that, in practice, a single bundle can contain multiple connectors of each type. This multiplicity allows for connections to more than one bundle on either side of the traversal path, thereby accommodating complex provenance scenarios. The ability to link multiple bundles through various connectors enhances the flexibility and depth of the provenance chain, enabling a more detailed and comprehensive representation of the provenance.
-
-With its series of linked bundles and partially predefined configuration, this chain structure offers a robust framework for documenting, tracking, and analyzing the provenance.
+Provenance backbone is composed of three main types of Entities designed to establish connections within and between bundles. The first two of the mentioned Entities are backwardConnector and forwardConnector which stand on the endpoints of the backbone. The backwardConnector links to a forwardConnector in the preceding Bundle with same identifier, creating a backward traversal path. Conversely, the forwardConnector establishes a forward link to a backwardConnector in the subsequent Bundle, with the same identifier as well. In the middle of the backbone stands the third Entity called currentConnector. This Entity references the current state of the object described by the provenance, linking it to the current bundle in the chain.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -199,16 +199,30 @@ With its series of linked bundles and partially predefined configuration, this c
   \caption{Connection of two provenance bundles}
   \label{fig:bundleconnection}
 \end{figure}
+
+While the example given simplifies the structure, it is important to note that, in practice, a single bundle can contain multiple connectors of each type. This multiplicity allows for connections to more than one bundle on either side of the traversal path, thereby accommodating complex provenance scenarios. The ability to link multiple bundles through various connectors enhances the flexibility and depth of the provenance chain, enabling a more detailed and comprehensive representation of the provenance.
+
+With its series of linked bundles and pre-defined structure, the provenance chain offers a robust framework for documenting, tracking, and analyzing the provenance.
 \shorthandon{-}
+
+\section{Additional concepts}
 TODO
+
+\section{Real-world distribution}
+TODO
+
 
 \chapter{Design}
 \shorthandoff{-}
-This chapter delves into the architecture and logic of the library, which was developed as an implementation part of this thesis. The chapter has three main objectives. Firstly, it aims to provide a clear and concise overview of the structure of the library and its components, including their respective roles in the library's lifecycle. Secondly, it discusses the simulated environment of a real-world distribution and how it works. Finally, it describes the primary logic used for traversing a provenance chain. It is crucial to explain these specific details to understand the technical implementation described in the succeeding chapter. 
+This chapter delves into the architecture and logic of the library, which was developed as an implementation part of this thesis. The chapter has three main objectives. Firstly, it aims to provide a clear and concise overview of the structure of the library and its components, including their respective roles in the library's lifecycle. Secondly, it discusses the simulation of a real-world distribution and how it works. Finally, it describes the primary logic used for traversing a provenance chain. It is crucial to explain these specific details to understand the technical implementation described in the succeeding chapter. 
 \shorthandon{-}
+
+\section{Overview}
+TODO
+
 \section{Structure}
 \shorthandoff{-}
-At its core, the implementation is designed as a modular, multi-component library. Each component serves a distinct role but contributes to cohesive functionality. This modular approach facilitates easy maintenance and scalability. Central to this structure is a layered architecture, segregating the library operations into distinct layers - data retrieval, processing, and presentation. 
+At its core, the implementation is designed as a modular, multi-compo-\\nent library. Each component serves a distinct role but contributes to cohesive functionality. This modular approach facilitates easy maintenance and scalability. Central to this structure is a layered architecture, segregating the library operations into distinct layers - data retrieval, processing, and presentation. 
 The data retrieval layer is responsible for acquiring the PROV-N data, depending on the type of storage, and deserializing it into a unified type. 
 The processing layer handles the traversal of the provenance chain as well as the traversal of the directed graph inside each PROV-N document. It is also responsible for evaluating the documents' integrity and retrieving the relevant provenance data.
 Finally, the presentation layer provides the interface for user interaction, enabling command inputs and displaying results on the command line.
@@ -219,15 +233,15 @@ Finally, the presentation layer provides the interface for user interaction, ena
 The library's components are separated into four main parts.
 \begin{enumerate}
     \item \textbf{Main UI:}
-        This component is tasked with the preparation of resources for the library and providing a user interface on the command line, where the user can input commands and view the results of the entered queries. The user interface also provides quality-of-life functions, such as command auto-completion, command history, or in-command query history.
+        The Main UI component is tasked with the initialization of resources for the library and providing a user interface on the command line, where the user can input commands and view the results of the entered queries. The user interface also provides quality-of-life functions, such as command auto-completion, command history, or in-command query history.
     \item \textbf{Configuration:}
-        This set of components retrieves data from a configuration JSON file and passes it to the library.
+        The Configuration component retrieves data from a configuration JSON file and passes it to the library.
     \item \textbf{Tools:}
-        This set of components serves as a toolset for the library. The first set of tools retrieves and deserializes PROV-N documents depending on their storage type. It currently supports retrieving files saved locally in the file system and remotely in GitLab repositories. 
+        The Tools component serves as a toolset for the library with the first set of tools used to retrieve and deserialize PROV-N documents depending on their storage type. 
         The second set of tools is used to resolve persistent identifiers stored in the relevant navigation table.
         The third is used for retrieving hash values from the corresponding meta-provenance, and the last is used for hash creation.
     \item \textbf{Main logic:}
-        This last set of components handles the data processing. It traverses the provenance chain and retrieves the user-specified data. It also assures the correctness of the traversed chain by evaluating the integrity of the document using its hash values stored in the corresponding meta-provenance and comparing it to new hash values created using the last set of tools.
+        The Main logic component handles the data processing. It traverses the provenance chain and retrieves the user-specified data. It also assures the correctness of the traversed chain by evaluating the integrity of the document using its hash values stored in the corresponding meta-provenance and comparing it to new hash values created using the last set of tools.
 \end{enumerate}
 \shorthandon{-}
 
@@ -236,7 +250,7 @@ The library's components are separated into four main parts.
 For the implementation to simulate a real-world environment, some regulations had to be established specifically for this thesis. The PROV-N serialization will be the only one used in this thesis. The PROV-N documents used in the implementation were generated and provided by the thesis supervisor using the "cite thesis". These documents follow a predefined structure and naming rules described in the standard currently being developed by the supervisor and his colleagues. The implementation will also include a package for generating meta-provenance, which will be used for the provided documents. Lastly, the resolution of the persistent identifiers will be done with an in-memory navigation table created during the library's initialization process containing all of the provided documents.
 \shorthandon{-}
 
-\section{Algorithm}
+\section{Provenance chain traversal}
 \shorthandoff{-}
 As mentioned before in section \ref{s-provchain}, the main structure of a bundle consists of three Entities with predefined connector types connected by the wasDerivedFrom statements. As an example of the traversal, assume the algorithm has already traversed one bundle and is now entering a succeeding one with its graph's structure, as shown in Figure.
 
@@ -283,38 +297,94 @@ After reaching the end of the bundle's graph, the algorithm can enter another bu
 
 
 \chapter{Implementation}
-\section{Used technologies}
 \shorthandoff{-}
+This chapter aims to bridge the gap between the theoretical framework outlined in the Design chapter and the actual realization of the project. It offers an in-depth look at the code structure, libraries used, and the problems that arose during the implementation. Through a clear and systematic presentation, this chapter showcases the application's development process and serves as a valuable resource for understanding the practical challenges and solutions encountered. Reading this chapter will offer insights into the application's architecture and operational mechanics, providing a deeper appreciation of the project's technical complexity.
+
+\section{Project structure}
+TODO
+
+\section{Used technologies}
+The following part delves into the libraries and tools used in the implementation and the reasoning behind each.
 \subsection{ProvToolBox}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+ProvToolBox is a library for managing provenance data within the implementation.  
 \subsubsection{PROV MODEL}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+The 'prov-model' is used across the whole library to create and manipulate provenance documents.
 \subsubsection{PROV INTEROP: LIGHT}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+Complementary to the prov-model, the 'prov-interop-light' enhances the system's interoperability. This library facilitates the conversion of provenance data into various formats, ensuring that the application can communicate effectively with other provenance-aware systems and tools.
 \subsection{Jackson Databind}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+Jackson Databind is a library for handling JSON data formats. In ConfigLoader.java and Configuartion.java, 'jackson-databind' parses the configuration file and creates Java objects from JSON. This functionality is crucial in managing configurations within the library.
 \subsection{GitLab4J API}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+Integrated primarily in GitLabFileLoader.java, the GitLab4J API is a library to facilitate interaction with GitLab's APIs. It automates file retrieval, allowing the library to support git-based provenance storage.
 \subsection{JLine Bundle}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+JLine Bundle is a library used to enhance the user interface of the implementation, as seen in MainRuntime.java. It provides capabilities such as command-line completion and history, significantly improving the user experience by making the interface more intuitive and responsive.
 \subsection{Jansi}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-
+Utilized in MainRuntime.java, Jansi is a library used to add stylistic improvements to the console output. It renders text in different colors and styles, making the console output about the integrity of Bundles more readable and user-friendly.
 \subsection{Apache Maven Shade Plugin}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
-\shorthandon{-}
+Including the Maven Shade Plugin plays a significant role in the library's build process. This plugin creates an uber-jar, a standalone executable jar file containing all the necessary dependencies. This approach simplifies deployment and distribution, ensuring the library is self-contained and can be run in diverse environments without additional dependency management.
+
+
+\section*{}
+Each library has been chosen and integrated into the implementation to address specific functional requirements and enhance the application's usability, efficiency, and interoperability. The strategic use of these libraries aligns with the broader goal of creating a user-focused, adaptable, and future-proof application.
 
 \section{Runtime}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
+This section is intended to provide a concise runtime walkthrough of the library. The purpose is to offer insight into how different classes and components interact to produce the desired query results for the user. By following this walkthrough, readers will understand the underlying mechanisms of the library's runtime operation. Starting with the class Main, which serves as a single entry point, calling the static MainRuntime class. MainRuntime serves as the top-level part of the library, statically initializing all resources and simultaneously providing a user interface for command inputs.
+
+For this walkthrough, the queried request is to retrieve the precursors of an Entity by using the 'precursors' command. In the context of the 'precursors' command, i.e., when traversing the provenance chain backward, the mentioned precursors are represented as forwardConnector Entities of the preceding bundles.
+
+After the command is identified, the findPrecursors method is entered with a false argument, as the user does not wish to retrieve the main Activity alongside the precursors. Upon entering the method, the user is prompted to enter the Entity's ID and URI and the ID and URI of the Bundle in which the Entity resides. Next, the correct implementation of the IFileLoader interface is chosen to retrieve the PROV-N file and return it deserialized into a Document object. After that, the integrity of the Document is verified by calling the checkSum method of the Crawler class. With this, the preparation phase ends, and the runtime enters the Crawler's method getPrecursors.
+
+Upon entering, the proper navigational table resolver is chosen, and the connector type of the Entity is retrieved. Next comes the first if branch, checking whether the connector type is a forwardConnector. If not, the method continues; if it is, the current Entity with its Bundle is retrieved as a precursor, and the method continues. Right after the first if branch comes a second one checking whether the connector type is a backwardConnector; if it is, it means the method reached the end of the current Bundle's graph, and it will repeat the same process as in the MainRuntime section, retrieving the following Document and verifying its integrity after which, it calls the getPrecursors method recursively. If not, it will search through the WasDerivedFrom statements in the Document to find which Entity is following in the traversal and call the getPrecursors method recursively with the same Document and the newly found Entity. 
+
+After the runtime is done traversing every Bundle in the chain, it prints those results on the command line, along with confirmation of the verified integrity of each Bundle.
 
 \section{Problems during implementation}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies.
+Four main problems were encountered during the implementation due to using the ProvToolBox Java library. The simulation files provided by the supervisor were generated using a Python library, which produced files with some notation differences. The first is that the Python library supports attributes with multiple values using parentheses, while the Java library needs each attribute to have only one value.
+
+\begin{verbatim}
+
+    Python: 
+        dct:hasPart=('prefix:local','prefix:local')
+    Java:
+        dct:hasPart='prefix:local', 
+        dct:hasPart='prefix:local' 
+        
+\end{verbatim}
+
+The second problem came from the Python library supporting the creation of Entities with space in names, which is seen as a syntax error by the Java library.
+
+\begin{verbatim}
+
+    Python:
+        entity(prefix:local 1, [prov:type=...
+    Java:
+        entity(prefix:local_1, [prov:type=... 
+        
+\end{verbatim}
+
+The third problem was caused because the Python library generates attributes with values encompassed by double quotes. The Java library differentiates between single and double quotes. The single quotes are resolved as the QualifiedName specified inside of them.
+
+\begin{verbatim}
+
+    cpm:receiverBundleId='prefix:local.provn'
+    
+    Resolved:
+        'prefix:{{uri}}local.provn'
+        
+\end{verbatim}
+
+While the double quotes are regarded as a LangString
+
+\begin{verbatim}
+
+    cpm:receiverServiceUri="#URI#"
+    
+    Resolved:
+        LangString@xxx[value=#URI#,lang=<null>]
+        
+\end{verbatim}
+
+The last problem came from the fact that the ProvToolBox library, at the time of thesis implementation, was left on version 0.9.3, with the last update being over a year ago, which caused some of the library's features not to work correctly or at all. As of the late summer of 2023, the development seems to have returned, and new updates are being released.
+\shorthandon{-}
 
 
 \chapter{Manual}
