@@ -66,7 +66,7 @@
     keywords    = {Java, provenance, SOBHA, ÚVT},
     TeXkeywords = {Java, provenance, SOBHA, ÚVT},
     abstract    = {%
-      Provenance is a standardized information type that documents the history of an object. It can hold information, such as the origin of an object or previous actions performed on it. This information can be serialized into one of the many supported file formats (e.g., PROVN, XML). These files can then be interconnected, resulting in the creation of a provenance chain. This thesis aims to implement a library for traversing said provenance chains, retrieving information about the precursors or successors of an entity represented in one of the files in the current chain, and optionally retrieving the type of actions performed on the object by the retrieved precursors/successors. The implementation will simulate the operational environment by providing a command-line user interface from where the user can call the mentioned actions on a set of prefactured simulation files. The implementation will follow a W3C PROV-DM standard for provenance notation, and the simulation files will be of a PROVN serialization of provenance data. Additionally to the traversing operations, it will also implement the generation of a provenance metadata to make the simulation of a traversal possible.
+      Provenance is information documenting the history of an object. It can hold information, such as the origin of an object or previous actions performed on it. This information can be serialized into one of the many supported representations (e.g., PROV-N, XML) and subsequently interconnected, creating a provenance chain. This thesis aims to implement a tool for traversing provenance chains represented by PROV-N files, retrieving information about the precursors or successors of an entity represented in one of the files in the current chain, and optionally retrieving the type of actions performed on the object by the retrieved precursors/successors. The implementation will simulate the operational environment by providing a command-line user interface from where the user can call the mentioned actions on a set of pre-generated simulation files. Additionally to the traversing operations, it will also implement the generation of a provenance metadata to make the simulation of a traversal possible.
     },
     thanks      = {%
       TODO
@@ -85,6 +85,7 @@
 \usepackage{url}      %% Hyperlinks
 \usepackage{markdown} %% Lightweight markup
 \usepackage{listings} %% Source code highlighting
+\usepackage{dirtree}
 \lstset{
   basicstyle      = \ttfamily,
   identifierstyle = \color{black},
@@ -254,7 +255,7 @@ The library's components are separated into four main parts.
     \item \textbf{Tools:}
         The Tools component serves as a toolset for the library, with the first set of tools used to retrieve and deserialize PROV-N documents depending on their storage type. 
         The second set of tools is used to resolve persistent identifiers stored in the relevant navigation table.
-        The third is used for retrieving hash values from the corresponding meta-provenance, and the last is used for hash creation.
+        The third is used for retrieving hash values from the corresponding meta-provenance, and the last is used for hash creation and integrity verification.
     \item \textbf{Main logic:}
         The Main logic component handles the data processing. It traverses the provenance chain and retrieves the user-specified data. It also assures the correctness of the traversed chain by evaluating the integrity of the document using its hash values stored in the corresponding meta-provenance and comparing it to new hash values created using the last set of tools.
 \end{enumerate}
@@ -315,17 +316,12 @@ The traversal ends when no more Entities are derived using the wasDerivedFrom ed
 
 \chapter{Implementation}
 \shorthandoff{-}
-This chapter aims to bridge the gap between the theoretical framework outlined in the Design chapter and the actual realization of the project. It offers an in-depth look at the code structure, libraries used, and the problems that arose during the implementation. Through a clear and systematic presentation, this chapter showcases the application's development process and serves as a valuable resource for understanding the practical challenges and solutions encountered. Reading this chapter will offer insights into the application's architecture and operational mechanics, providing a deeper appreciation of the project's technical complexity.
-
-\section{Project structure}
-TODO
+This chapter aims to establish a connection between the theoretical framework discussed in the Design chapter and the practical implementation of the project. Firstly, it offers an in-depth look at the code structure. After that, it provides a listing of used libraries and a description of their usage in the implementation. It follows with a description of the implementation's runtime and finishes with a section about problems that arose during the implementation.
 
 \section{Used technologies}
-The following part delves into the libraries and tools used in the implementation and the reasoning behind each.
+The following part delves into the libraries and tools used in the implementation and the reasoning behind the usage of each.
 \subsection{ProvToolBox}
-ProvToolBox is a library for managing provenance data. This implementation uses it's two sub-libraries prov-model and prov-interop-light.  
-The prov-model is used across the whole library to create and manipulate provenance documents.
-Complementary to the prov-model, the prov-interop-light enhances the system's interoperability. This library facilitates the conversion of provenance data into various formats, ensuring that the application can communicate effectively with other provenance-aware systems and tools.
+The ProvToolBox library is a cornerstone for managing provenance data within the implementation. It provides multiple sublibraries, each focusing on some aspect of provenance management in the code. Two of these sublibraries, the prov-model, and prov-interop-light, are used in this implementation. The prov-model is used across the whole implementation to create and manipulate provenance documents. Complementary to the prov-model, the prov-interop-light enhances the system's interoperability. This library facilitates the conversion of provenance data into various formats, ensuring that the application can communicate effectively with other provenance-aware systems and tools.
 \subsection{Jackson Databind}
 Jackson Databind is a library for handling JSON data formats. In ConfigLoader.java and Configuartion.java, 'jackson-databind' parses the configuration file and creates Java objects from JSON. This functionality is crucial in managing configurations within the library.
 \subsection{GitLab4J API}
@@ -333,27 +329,121 @@ Integrated primarily in GitLabFileLoader.java, the GitLab4J API is a library to 
 \subsection{JLine Bundle}
 JLine Bundle is a library used to enhance the user interface of the implementation, as seen in MainRuntime.java. It provides capabilities such as command-line completion and history, significantly improving the user experience by making the interface more intuitive and responsive.
 \subsection{Jansi}
-Utilized in MainRuntime.java, Jansi is a library used to add stylistic improvements to the console output. It renders text in different colors and styles, making the console output about the integrity of Bundles more readable and user-friendly.
+Utilized in MainRuntime.java, Jansi is a library used to improve formatting options of the console output. It renders text in different colors and styles, making the console output about the integrity of Bundles more readable and user-friendly.
 \subsection{Apache Maven Shade Plugin}
-Including the Maven Shade Plugin plays a significant role in the library's build process. This plugin creates an uber-jar, a standalone executable jar file containing all the necessary dependencies. This approach simplifies deployment and distribution, ensuring the library is self-contained and can be run in diverse environments without additional dependency management.
-
-
+The Maven Shade Plugin plays a significant role in the library's build process. This plugin creates an uber-jar, a standalone executable jar file containing all the necessary dependencies. This approach simplifies deployment and distribution, ensuring the library is self-contained and can be run in diverse environments without additional dependency management.
 \section*{}
 Each library has been chosen and integrated into the implementation to address specific functional requirements and enhance the application's usability, efficiency, and interoperability. The strategic use of these libraries aligns with the broader goal of creating a user-focused, adaptable, and future-proof application.
 
-\section{Runtime}
-This section is intended to provide a concise runtime walkthrough of the library. The purpose is to offer insight into how different classes and components interact to produce the desired query results for the user. By following this walkthrough, readers will understand the underlying mechanisms of the library's runtime operation. Starting with the class Main, which serves as a single entry point, calling the static MainRuntime class. MainRuntime serves as the top-level part of the library, statically initializing all resources and simultaneously providing a user interface for command inputs.
+\section{Project structure}
+\subsection{Configuration}
+\dirtree{%
+.1 provenancechain.
+.2 config.
+.3 ConfigLoader.java.
+.3 Configuration.java.
+.2 ....
+}
+\vskip 0.35cm
 
-For this walkthrough, the queried request is to retrieve the precursors of an Entity by using the 'precursors' command. In the context of the 'precursors' command, i.e., when traversing the provenance chain backward, the mentioned precursors are represented as forwardConnector Entities of the preceding bundles.
+The configuration package comprises two classes for loading configuration data from a JSON file using the Jackson Databind library. The ConfigLoader class contains the main logic for JSON file deserialization. On the other hand, the Configuration class specifies the data type or object that the deserialized data will be cast into, depending on their name.
 
-After the command is identified, the findPrecursors method is entered with a false argument, as the user does not wish to retrieve the main Activity alongside the precursors. Upon entering the method, the user is prompted to enter the Entity's ID and URI and the ID and URI of the Bundle in which the Entity resides. Next, the correct implementation of the IFileLoader interface is chosen to retrieve the PROV-N file and return it deserialized into a Document object. After that, the integrity of the Document is verified by calling the checkSum method of the Crawler class. With this, the preparation phase ends, and the runtime enters the Crawler's method getPrecursors.
+\subsection{Tools}
+\dirtree{%
+.1 provenancechain.
+.2 ....
+.2 tools.
+.3 loading.
+.4 ....
+.4 IFileLoader.java.
+.4 LoaderResolver.java.
+.4 SupportedExtensions.java.
+.3 metadata.
+.4 IPidResolver.java.
+.3 retrieving.
+.4 IMetaHashRetriever.java.
+.3 security.
+.4 HashDocument.java.
+.4 IntegrityVerifier.java.
+}
+\vskip 0.35cm
 
-Upon entering, the proper navigational table resolver is chosen, and the connector type of the Entity is retrieved. Next comes the first if branch, checking whether the connector type is a forwardConnector. If not, the method continues; if it is, the current Entity with its Bundle is retrieved as a precursor, and the method continues. Right after the first if branch comes a second one checking whether the connector type is a backwardConnector; if it is, it means the method reached the end of the current Bundle's graph, and it will repeat the same process as in the MainRuntime section, retrieving the following Document and verifying its integrity after which, it calls the getPrecursors method recursively. If not, it will search through the WasDerivedFrom statements in the Document to find which Entity is following in the traversal and call the getPrecursors method recursively with the same Document and the newly found Entity. 
+The tools package consists of four sub-packages, each with a set of specific tools. 
 
-After the runtime is done traversing every Bundle in the chain, it prints those results on the command line, along with confirmation of the verified integrity of each Bundle.
+The loading sub-package consists of tools used for file retrieval. The IFileLoader interface is used to implement file retrieval depending on the type of storage, with current implementations being for GitLab and the local file system. Supplementary to the interface, the LoaderResolver class is used to choose the correct interface implementation, and the SupportedExtensions enum is used to avoid unsupported file types. 
+
+The metadata sub-package consists of an IPidResolver interface used to implement resolving and access to the navigational table for different types of PIDs. 
+
+The retrieving sub-package consists of an IMetaHashRetriever interface used to implement retrieval of hash values depending on the meta-provenance that contains it. 
+
+Lastly, the security sub-package consists of tools used for operations with hashes. The HashDocument contains methods to create hashes for Documents, with SHA-256 and MD5 currently being the only techniques supported. The IntegrityVerifier class contains a static method to compare existing hashes from meta-provenance with newly created ones.
+
+\subsection{Simulation}
+\dirtree{%
+.1 provenancechain.
+.2 ....
+.2 simulation.
+.3 ....
+.3 Initializer.java.
+.3 SimulationFiles.java.
+.2 ....
+}
+\vskip 0.35cm
+
+The simulation package is used to hold implementations of interfaces from the tools package and other classes explicitly used for the simulation in this thesis. The SimulationFiles class is similar in structure to the IFileLoader implementations in the loading sub-package. However, it is used to load and prepare copies of the provided files saved in the project's resources to be used for simulation purposes. The Initializer class represents the building process of the simulation. It uses the SimulationFiles class to retrieve the required files and uses them to generate a meta-provenance and to create a navigational table. It also provides a static method to access this navigational table.
+
+\newpage
+\subsection{Main logic}
+\dirtree{%
+.1 provenancechain.
+.2 ....
+.2 logic.
+.3 data.
+.4 ProvenanceNode.java.
+.3 Crawler.java.
+.2 ....
+.2 MainRuntime.java.
+}
+\vskip 0.35cm
+
+The logic package and the MainRuntime class serve as the main logic of the implementation. The MainRuntime has a static constructor to initialize required resources for the implementation to work and provides a user-friendly command line interface for the user to enter commands. The supported commands are:
+
+\begin{enumerate}
+    \item "exit" to exit the program
+    \item "precursors"/"successors" to print the precursors or successors of an Entity
+    \item "precursors-activity"/"successors-activity" to print the precursors or successors of an Entity with the inclusion of the main Activity for each Bundle
+    \item "resolve" to retrieve data from the navigational table for a specified Entity.
+    \item "list" to print out the whole navigational table
+    \item "help" to list all supported commands.
+\end{enumerate}
+
+The Crawler class contains the methods for traversing the provenance chain and retrieving the precursors or successors. The ProvenanceNode record is a direction-neutral representation of a node in the provenance graph and, therefore, can be used to store and represent the retrieved precursors or successors.
+
+\section{Execution walkthrough}
+This section is intended to provide a concise walkthrough of the implementation's execution. The purpose is to offer insight into how different classes and components interact to produce the desired results for the user. By following this walkthrough, readers will understand the underlying mechanisms of the operations performed during the execution. 
+
+The execution begins by calling the method main in the class Main. The static initialization from the MainRuntime class is performed, followed by the calling of its run method.
+
+\subsection{Initialization}
+The static initialization performed by the MainRuntime class consists of three parts. The first part is the retrieval of data from the configuration JSON file. The second part is the initialization of the simulated environment. This part loads the provided provenance files, which are saved in the project resources. These files are then used to generate a meta-provenance using the sublibrary described in "simulation." In addition to generating the meta-provenance, this part also generates a simulated navigational table using the same files. The last part is the initialization of the remaining resources for the implementation to work.
+
+\subsection{Runtime}
+After calling the run method from the MainRuntime class, a command line interface is provided for the user to enter commands. For this walkthrough, the request is to retrieve the precursors of an Entity by using the 'precursors' command. The mentioned precursors are represented by the QualifiedName identifiers of forwardConnector Entities of the preceding Bundles.
+ 
+Afterward, the user is prompted to enter a connector's ID and URI and the ID and URI of a Bundle whose backbone contains the entered connector. Next, the correct implementation of the IFileLoader interface is chosen depending on what type of storage the Bundle's URI is pointing to, and the PROV-N file, with a name matching the Bundle's ID, is returned deserialized into a Document object. After that, the integrity of the Document is verified by calling the static checkSum method of the IntegrityVerifier class. This method compares this Document's newly created hash with its hash in the meta-provenance. With a successful integrity verification, the runtime enters the Crawler's method getPrecursors.
+
+Upon entering, the proper navigational table resolver is chosen using the getPidResolver method. As part of the simulation in this thesis, the getPidResolver method is set to always return the simulated resolver. Next, the Bundle inside of the Document is retrieved and the type of the current connector is found. 
+
+If the type is a forwardConnector, the connector's identifier and its Bundle's identifier are added to the list of precursors. The connector's identifier is also added to the list of processed nodes, and the method continues. 
+
+If the type is a backwardConnector, it means the method reached the end of the current Bundle's backbone, and the same process as in the MainRuntime section repeats. The method uses the connector's entry in the navigational table to retrieve the identifier of the Bundle to which the connector is pointing. The following Document is retrieved using this information, and its integrity is again verified. The connector's identifier is added to the list of processed nodes, and the getPrecursors method is called with the same connector's identifier and the newly loaded Document. 
+
+If the type is neither, the method will search through the WasDerivedFrom statements in the current Bundle to find which connector is following in the traversal. It will then add this connector's identifier to the list of processed nodes and call the getPrecursors method with the current Document and the newly found connector's identifier. 
+
+After the runtime processes all Bundles in the chain and there are no more unprocessed connectors to enter, the traversal ends. The retrieved precursors are then printed on the command line, along with confirmation of the verified integrity of each Bundle. It should be mentioned that the implementation expects the chain to be correct, as the thesis supervisor stated that it should not focus on verification of whether the chain is cycled.
 
 \section{Problems during implementation}
-Four main problems were encountered during the implementation due to using the ProvToolBox Java library. The simulation files provided by the supervisor were generated using a Python library, which produced files with some notation differences. The first is that the Python library supports attributes with multiple values using parentheses, while the Java library needs each attribute to have only one value.
+Four problems were encountered during the implementation due to using the ProvToolBox Java library. The first three problems arose from the simulation files, provided by the thesis supervisor, being generated using a Python library, which produced files with some notation differences. The first is that the Python library supports attributes with multiple values using parentheses, while the Java library needs each attribute to have only one value.
 
 \begin{verbatim}
 
@@ -398,7 +488,9 @@ While the double quotes are regarded as a LangString
         
 \end{verbatim}
 
-The last problem came from the fact that the ProvToolBox library, at the time of thesis implementation, was left on version 0.9.3, with the last update being over a year ago, which caused some of the library's features not to work correctly or at all. As of the late summer of 2023, the development seems to have returned, and new updates are being released.
+These findings about the libraries' differences were then reported to the thesis supervisor and were corrected in the provided files to use the Java-compatible notation.
+
+The last problem came from the fact that the ProvToolBox library, at the time of thesis implementation, was left on version 0.9.3, with the last update being over three years ago, which caused some of the library's features not to work correctly or at all. One such feature was a method getEntity used to return an Entity with specified QualifiedName from a Bundle. The library's GitHub page had an open issue from 2019 about a similar method used to return an Agent instead of an Entity. To possibly remind the authors about the issue, a reply was posted as the specifications in the issue also applied to the getEntity method. The absence of this method in the implementation was compensated by looping over the Entities inside of a Bundle and finding the Entity with the same identifier. As of the late summer of 2023, the development seems to have returned, with new updates being released, and the mentioned issue being resolved and closed.
 \shorthandon{-}
 
 
