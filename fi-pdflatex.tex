@@ -71,7 +71,7 @@
     thanks      = {%
       TODO
     },
-    bib         = example.bib,
+    bib         = citations.bib,
     %% Remove the following line to use the JVS 2018 faculty logo.
     facultyLogo = fithesis-fi,
 }
@@ -120,7 +120,15 @@ The thorough examination of provenance in this chapter aims to equip readers wit
 
 \section{PROV-DM} \label{provdm}
 \shorthandoff{-}
-In order to enable the inter-operable interchange of provenance information, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM represents provenance as a directed graph through nodes and edges. 
+In order to enable the inter-operable interchange of provenance information, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM represents provenance as a directed graph through nodes and edges.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12.5cm]{fithesis/images/provdm-basics.png}
+  \end{center}
+  \caption{High level overview of the structure of PROV records \cite{provdm-basics}}
+  \label{fig:provdm-basics}
+\end{figure}
 
 Nodes in this graph represent Entities, Activities, and Agents. Entities represent physical, digital, or other objects central to or associated with the provenance. Activities represent actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities. Additionally, each node has a unique identifier, which identifies it in the current provenance graph. The identifier is a QualifiedName, which consists of the name of the object it refers to and a namespace that categorizes or contains it.
 
@@ -133,24 +141,24 @@ Moreover, the PROV-DM standard includes a concept known as Bundles, which are us
 \shorthandoff{-}
 PROV-N is a component of the W3C PROV suite, designed to represent PROV-DM in a human-readable textual format. This format organizes provenance information into three main sections: namespace declarations, statements, and bundles. 
 
-Namespace declarations shorten the QualifiedName identificators by specifying a shorthand prefix to a longer namespace URI at the beginning of each Document and Bundle. For instance, a QualifiedName with a specified prefix may look like "ns\_surgery:sampleConnector." Namespaces are declared as follows:
+Namespace declarations shorten the QualifiedName identificators by specifying a shorthand prefix to a longer namespace URI at the beginning of each Document and Bundle. For instance, a QualifiedName with a specified prefix may look like "prefix1:sampleConnector." Namespaces are declared as follows:
 
 \begin{verbatim}
 
-prefix ns_surgery <ns_surgery_URI>
-prefix ns_pathology <ns_pathology_URI>
+prefix prefix1 <prefix1_URI>
+prefix prefix2 <prefix2_URI>
 
 \end{verbatim}
 
-Statements in PROV-N represent nodes and edges in the provenance graph. For example, an entity might be described as \\entity(ns\_surgery:sampleConnector) with attributes detailing its characteristics:
+Statements in PROV-N represent nodes and edges in the provenance graph. For example, an entity might be described as \\entity(prefix1:sampleConnector) with attributes detailing its characteristics:
 
 \begin{verbatim}
 
-entity(ns_surgery:sampleConnector, [
+entity(prefix1:sampleConnector, [
     prov:type=
         'cpm:forwardConnector', 
     cpm:receiverBundleId=
-        'ns_pathology:02_scanning.provn', 
+        'prefix2:sampleBundle2.provn', 
     cpm:receiverServiceUri=
         "#URI#"
     ])
@@ -162,18 +170,18 @@ After the application of the examples above, the finished PROV-N document, with 
 \begin{verbatim}
 
 document
-  prefix ns_surgery <ns_surgery_URI>
+  prefix prefix1 <prefix1_URI>
 
-  bundle ns_surgery:01_sample_acquisition.provn
-    prefix ns_surgery <ns_surgery_URI>
-    prefix ns_pathology <ns_pathology_URI>
+  bundle prefix1:sampleBundle1.provn
+    prefix prefix1 <prefix1_URI>
+    prefix prefix2 <prefix2_URI>
     prefix cpm <cpm_URI>
 
-    entity(ns_surgery:sampleConnector,[
+    entity(prefix1:sampleConnector,[
         prov:type=
-            'cpm:senderConnector',
+            'cpm:forwardConnector',
         cpm:receiverBundleId=
-            'ns_pathology:02_scanning.provn',
+            'prefix2:sampleBundle2.provn',
         cpm:receiverServiceUri=
             "#URI#"
     ])
@@ -187,7 +195,7 @@ endDocument
 \shorthandoff{-}
 The provenance chain is a sequence of interconnected Bundles, each encapsulating a graph consisting of two types of information. The first is a provenance backbone, a part of the Bundle's graph with a pre-defined structure used to establish connections within and between Bundles. The second information type is a domain-specific part of the graph. This thesis will work only with the provenance backbone. 
 
-The provenance backbone, as can be seen in \ref{fig:bundleconnection} comprises three types of Entities: backwardConnector, currentConnector, and forwardConnector. These Entities are related to each other through the WasDerivedFrom derivation. 
+The provenance backbone, as can be seen in \ref{fig:bundleconnection} comprises three types of Entities: backwardConnector, currentConnector, and forwardConnector. These Entities are related to each other through the wasDerivedFrom derivation. 
 
 The backwardConnector represents a reference to the previous Bundle in the chain, where it links to a forwardConnector with the same identifier. Its content represents the documented object at the time it was sent from the previous Bundle.
 
@@ -195,11 +203,11 @@ The currentConnector, derived from the backwardConnector, represents a reference
 
 The forwardConnector, derived from the currentConnector, represents a reference to the succeeding Bundle in the chain, where it links to a backwardConnector with the same identifier. Its content represents the documented object at the time it was sent from the current Bundle.
 
-If graphs of two succeeding Bundles were to merge, the point of connection of these graphs would be their linked forwardConnector and backwardConnector, both representing the documented object at the same time instant.
+If graphs of two succeeding Bundles were to merge, the point of connection of these graphs would be their linked forwardConnector and backwardConnector, both representing the documented object at the same time instant. \cite{provchain}
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=12.5cm]{fithesis/images/bundleconnection.png}
+    \includegraphics[width=12.5cm]{fithesis/images/backbone.png}
   \end{center}
   \caption{Connection of two provenance bundles}
   \label{fig:bundleconnection}
@@ -212,7 +220,7 @@ While the example simplifies the structure, it is important to note that, in pra
 The provenance chain is meant to be used in a distributed environment, meaning the whole provenance chain is distributed across multiple companies and that one or more Bundles from the chain represent a company's processing of the provenance's object, effectively documenting its complete lifecycle. An example of this would be the collection of a biological sample from a person and its subsequent processing. The first Bundle in such a chain would represent the collection center and document information such as who and how collected the sample or from whom it was collected. It would then be linked to a succeeding Bundle in the chain, representing the research center where the sample was sent. Following this formula, the whole lifecycle of the sample would be documented, making its history traceable for future verification or measurement replication.
 
 \section{Additional concepts}
-Additional concepts were developed in order to address issues that tie to the usage of the provenance chain in a distributed environment. One such issue is how to account for versioning of Bundles in the chain. To address it, the meta-provenance is used. Meta-provenance is a Bundle that keeps provenance, like the current version and its hashes, about the Bundles, ensuring that each one links to the correct version of the succeeding Bundles. 
+Additional concepts were developed in order to address issues that tie to the usage of the provenance chain in a distributed environment. One such issue is how to account for versioning of Bundles in the chain. To address it, the meta-provenance is used. Meta-provenance is a Bundle that keeps provenance, like the current version and its hashes, about the Bundles, ensuring that each one links to the correct version of the succeeding Bundles. \cite{metaprov}
 
 Another issue emerged from the fact that the links pointing to Bundles in the chain can change, for example, due to changes in different versions of a Bundle. To mitigate this issue, persistent identification (PID) is used. The PID guarantees that the link to the Bundle will always be valid. This is accomplished by the PID service assigning a unique identification for the passed link and returning it to the user, who can then resolve this identification into the original link. If the original link is not valid anymore, the returned identification is assigned to the new valid link, ensuring the user always has access to the linked Bundle.
 
@@ -231,7 +239,7 @@ Thanks to its command line interface, the implementation allows users to perform
 
 A bonus feature of the implemented command line interface is that it serves as a code reference for anyone who wants to use one or more library components for their project. By looking at the code of the interface, any interested party can gain insight into how and where to initialize and use the library's components for their intended results.
 
-Furthermore, the implementation contains a secondary library used to generate meta-provenance to keep the provenance of Bundles in the chain with their hashes. This secondary library is used only for the simulation, to be described in "simulation."
+Furthermore, the implementation contains a secondary library used to generate meta-provenance to keep the provenance of Bundles in the chain with their hashes. This secondary library is used only for the simulation, to be described in \ref{s-simulation}.
 
 \section{Structure}
 \shorthandoff{-}
@@ -261,54 +269,54 @@ The library's components are separated into four main parts.
 \end{enumerate}
 \shorthandon{-}
 
-\section{Simulation}
+\section{Simulation} \label{s-simulation}
 \shorthandoff{-}
-For the implementation to provide a more focused simulation of a real-world environment, some limitations had to be established specifically for this thesis. The simulation of a distributed environment is performed on a set of prepared files. The thesis supervisor provided this set comprising 6 PROV-N files, each containing a single Bundle pre-filled with domain-specific data and a provenance backbone defined in "provchain" to form a provenance chain. This provenance chain represents a process from digital pathology, where a biological sample is retrieved from a patient, to be then processed for the generation of image data, which is then used as input for the training of artificial intelligence. The described process consists of 6 steps, with each step being documented in one of the Bundles from the chain. The simulation itself is achieved by a recursive call of the Main logic on this provenance chain. In contrast, in a real-world environment, this Main logic would exist, for example, in a public API of a service deployed in multiple instances. 
+For the implementation to provide a more focused simulation of a real-world environment, some limitations had to be established specifically for this thesis. The simulation of a distributed environment is performed on a set of prepared files. The thesis supervisor provided this set comprising 6 PROV-N files, each containing a single Bundle pre-filled with domain-specific data and a provenance backbone defined in \ref{s-provchain} to form a provenance chain. This provenance chain represents a process from digital pathology, where a biological sample is retrieved from a patient, to be then processed for the generation of image data, which is then used as input for the training of artificial intelligence. The described process consists of 6 steps, with each step being documented in one of the Bundles from the chain. The simulation itself is achieved by a recursive call of the Main logic on this provenance chain. In contrast, in a real-world environment, this Main logic would exist, for example, in a public API of a service deployed in multiple instances. 
 
-Because when the work on this thesis began, the concept of provenance chains was a state-of-the-art solution for the representation of distributed provenance, the way PID resolution and meta-provenance were going to work still needed to be decided. Both had to be implemented in this thesis to overcome this issue and simulate their existence in a real-world environment. For meta-provenance, a second library was implemented. This library generates a single meta-provenance containing all Bundles from the chain, along with their hashes, which it also generates using the "Tools" for hash creation. To simulate PID resolution, an in-memory implementation of a navigational table is used. This table consists of all Bundles in the chain, and access to it is implemented through the PID resolution Interface. The inclusion of this Interface allows the implemented library to be extended to other types of PID resolution and navigational tables.
+Because when the work on this thesis began, the concept of provenance chains was a state-of-the-art solution for the representation of distributed provenance, the way PID resolution and meta-provenance were going to work still needed to be decided. Both had to be implemented in this thesis to overcome this issue and simulate their existence in a real-world environment. For meta-provenance, a second library was implemented. This library generates a single meta-provenance containing all Bundles from the chain, along with their hashes, which it also generates using the Tools for hash creation. To simulate PID resolution, an in-memory implementation of a navigational table is used. This table consists of all Bundles in the chain, and access to it is implemented through the PID resolution Interface. The inclusion of this Interface allows the implemented library to be extended to other types of PID resolution and navigational tables.
 \shorthandon{-}
 
 \section{Provenance chain traversal}
 \shorthandoff{-}
-This section discusses the traversal of the provenance chain using the provenance backbone and retrieval of precursors or successors of an Entity. The inputs for this traversal are a QualifiedName identifier of an Entity and a QualifiedName identifier of a Bundle containing the Entity. In this example, the traversal moves in a forward direction, retrieving the successors of the Entity. The successors are represented by backwardConnectors. The inputs are prefix1:entity1, which is a forwardConnector from prefix1:bundle1, and the provenance chain has a structure, as shown in "Figure."
+This section discusses the traversal of the provenance chain using the provenance backbone and retrieval of precursors or successors of an Entity. The inputs for this traversal are a QualifiedName identifier of an Entity and a QualifiedName identifier of a Bundle containing the Entity. In this example, the traversal moves in a forward direction, retrieving the successors of the Entity. The successors are represented by backwardConnectors. The inputs are prefix1:entity1, which is a forwardConnector from prefix1:bundle1, and the provenance chain has a structure, as shown in Figure \ref{fig:algorithm-Chain}
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+    \includegraphics[width=11.5cm]{fithesis/images/algorithm-Chain.png}
   \end{center}
-  \caption{Example provenance chain structure}
-  \label{fig:bundleexample}
+  \caption{Example of the provenance chain's structure}
+  \label{fig:algorithm-Chain}
 \end{figure}
 \shorthandon{-}
 
-Considering the traversal is already at the end of the bundle1's backbone, the next step is to move to the Entity linked to the entity1, which is an Entity with the same identifier in the bundle2.
+Considering the traversal is already at the end of the bundle1's backbone, the next step is to move to the Entity linked to the entity1, which is an Entity with the same identifier in the bundle2. An example shown in Figure \ref{fig:algorithm-BundleLink}
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+    \includegraphics[width=12cm]{fithesis/images/algorithm-BundleLink.png}
   \end{center}
-  \caption{Moving between Bundles}
-  \label{fig:bundleexample2}
+  \caption{Moving between two linked Bundles}
+  \label{fig:algorithm-BundleLink}
 \end{figure}
 
-Because the traversal is currently on a backwardConnector, the current Entity and Bundle identifiers are returned, and the traversal continues.
+Because the traversal is currently on a backwardConnector, the current Entity and Bundle identifiers are returned, as shown in Figure \ref{fig:algorithm-Result}, and the traversal continues.
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+    \includegraphics[width=12cm]{fithesis/images/algorithm-Result.png}
   \end{center}
   \caption{QualifiedNames of the current Entity and Bundle}
-  \label{fig:bundleexample3}
+  \label{fig:algorithm-Result}
 \end{figure}
 
-The next step is for the traversal to move using the wasDerivedFrom edge onto the following Entity, which is a currentConnector, and then move again using the wasDerivedFrom edge to arrive on a forwardConnector. The traversal moves into the next Bundle, and the whole process repeats, retrieving the next successor.
+The next step is for the traversal to move using the wasDerivedFrom edge onto the following Entity, which is a currentConnector, and then move again using the wasDerivedFrom edge to arrive on a forwardConnector. The traversal moves into the next Bundle, and the whole process repeats, retrieving the next successor. An example shown in Figure \ref{fig:algorithm-Continue}
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=9cm]{fithesis/images/examplebigger.png}
+    \includegraphics[width=12cm]{fithesis/images/algorithm-Continue.png}
   \end{center}
-  \caption{Traversal of the Bundles backbone}
-  \label{fig:bundleexample4}
+  \caption{Traversal of the Bundle's backbone}
+  \label{fig:algorithm-Continue}
 \end{figure}
 
 The traversal ends when no more Entities are derived using the wasDerivedFrom edge, or there are no succeeding bundles.
@@ -321,17 +329,17 @@ This chapter aims to establish a connection between the theoretical framework di
 \section{Used technologies}
 The following part delves into the libraries and tools used in the implementation and the reasoning behind the usage of each.
 \subsection{ProvToolBox}
-The ProvToolBox library is a cornerstone for managing provenance data within the implementation. It provides multiple sublibraries, each focusing on some aspect of provenance management in the code. Two of these sublibraries, the prov-model, and prov-interop-light, are used in this implementation. The prov-model is used across the whole implementation to create and manipulate provenance documents. Complementary to the prov-model, the prov-interop-light enhances the system's interoperability. This library facilitates the conversion of provenance data into various formats, ensuring that the application can communicate effectively with other provenance-aware systems and tools.
+The ProvToolBox library \cite{provtoolbox} is a cornerstone for managing provenance data within the implementation. It provides multiple sublibraries, each focusing on some aspect of provenance management in the code. Two of these sublibraries, the prov-model, and prov-interop-light, are used in this implementation. The prov-model is used across the whole implementation to create and manipulate provenance documents. Complementary to the prov-model, the prov-interop-light enhances the system's interoperability. This library facilitates the conversion of provenance data into various formats, ensuring that the application can communicate effectively with other provenance-aware systems and tools.
 \subsection{Jackson Databind}
-Jackson Databind is a library for handling JSON data formats. In ConfigLoader.java and Configuartion.java, 'jackson-databind' parses the configuration file and creates Java objects from JSON. This functionality is crucial in managing configurations within the library.
+Jackson Databind \cite{jackson} is a library for handling JSON data formats. In ConfigLoader.java and Configuartion.java, 'jackson-databind' parses the configuration file and creates Java objects from JSON. This functionality is crucial in managing configurations within the library.
 \subsection{GitLab4J API}
-Integrated primarily in GitLabFileLoader.java, the GitLab4J API is a library to facilitate interaction with GitLab's APIs. It automates file retrieval, allowing the library to support git-based provenance storage.
+Integrated primarily in GitLabFileLoader.java, the GitLab4J API \cite{gitapi} is a library to facilitate interaction with GitLab's APIs. It automates file retrieval, allowing the library to support git-based provenance storage.
 \subsection{JLine Bundle}
-JLine Bundle is a library used to enhance the user interface of the implementation, as seen in MainRuntime.java. It provides capabilities such as command-line completion and history, significantly improving the user experience by making the interface more intuitive and responsive.
+JLine Bundle \cite{jline} is a library used to enhance the user interface of the implementation, as seen in MainRuntime.java. It provides capabilities such as command-line completion and history, significantly improving the user experience by making the interface more intuitive and responsive.
 \subsection{Jansi}
-Utilized in MainRuntime.java, Jansi is a library used to improve formatting options of the console output. It renders text in different colors and styles, making the console output about the integrity of Bundles more readable and user-friendly.
+Utilized in MainRuntime.java, Jansi \cite{jansi} is a library used to improve formatting options of the console output. It renders text in different colors and styles, making the console output about the integrity of Bundles more readable and user-friendly.
 \subsection{Apache Maven Shade Plugin}
-The Maven Shade Plugin plays a significant role in the library's build process. This plugin creates an uber-jar, a standalone executable jar file containing all the necessary dependencies. This approach simplifies deployment and distribution, ensuring the library is self-contained and can be run in diverse environments without additional dependency management.
+The Maven Shade Plugin \cite{maven-shade} plays a significant role in the library's build process. This plugin creates an uber-jar, a standalone executable jar file containing all the necessary dependencies. This approach simplifies deployment and distribution, ensuring the library is self-contained and can be run in diverse environments without additional dependency management.
 \section*{}
 Each library has been chosen and integrated into the implementation to address specific functional requirements and enhance the application's usability, efficiency, and interoperability. The strategic use of these libraries aligns with the broader goal of creating a user-focused, adaptable, and future-proof application.
 
@@ -425,10 +433,18 @@ This section is intended to provide a concise walkthrough of the implementation'
 The execution begins by calling the method main in the class Main. The static initialization from the MainRuntime class is performed, followed by the calling of its run method.
 
 \subsection{Initialization}
-The static initialization performed by the MainRuntime class consists of three parts. The first part is the retrieval of data from the configuration JSON file. The second part is the initialization of the simulated environment. This part loads the provided provenance files, which are saved in the project resources. These files are then used to generate a meta-provenance using the sublibrary described in "simulation." In addition to generating the meta-provenance, this part also generates a simulated navigational table using the same files. The last part is the initialization of the remaining resources for the implementation to work.
+The static initialization performed by the MainRuntime class consists of three parts. The first part is the retrieval of data from the configuration JSON file. The second part is the initialization of the simulated environment. This part loads the provided provenance files, which are saved in the project resources. These files are then used to generate a meta-provenance using the sublibrary described in \ref{s-simulation}. In addition to generating the meta-provenance, this part also generates a simulated navigational table using the same files. The last part is the initialization of the remaining resources for the implementation to work.
 
 \subsection{Runtime}
-After calling the run method from the MainRuntime class, a command line interface is provided for the user to enter commands. For this walkthrough, the request is to retrieve the precursors of an Entity by using the 'precursors' command. The mentioned precursors are represented by the QualifiedName identifiers of forwardConnector Entities of the preceding Bundles.
+After calling the run method from the MainRuntime class, a command line interface is provided for the user to enter commands. For this walkthrough, the request is to retrieve the precursors of an Entity by using the 'precursors' command. The mentioned precursors are represented by the QualifiedName identifiers of forwardConnector Entities of the preceding Bundles. Refer to \ref{fig:runtime} for a better picture of the runtime.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12cm]{fithesis/images/precursorsactivity.png}
+  \end{center}
+  \caption{High level Activity diagram of the 'precursors' command}
+  \label{fig:runtime}
+\end{figure}
  
 Afterward, the user is prompted to enter a connector's ID and URI and the ID and URI of a Bundle whose backbone contains the entered connector. Next, the correct implementation of the IFileLoader interface is chosen depending on what type of storage the Bundle's URI is pointing to, and the PROV-N file, with a name matching the Bundle's ID, is returned deserialized into a Document object. After that, the integrity of the Document is verified by calling the static checkSum method of the IntegrityVerifier class. This method compares this Document's newly created hash with its hash in the meta-provenance. With a successful integrity verification, the runtime enters the Crawler's method getPrecursors.
 
@@ -537,22 +553,6 @@ To facilitate traversal simulation, the implementation employs several classes a
 \shorthandoff{-}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
 \shorthandon{-}
-
-After linking a bibliography data\-base files to the document using
-the \verb"\"\texttt{thesis\discretionary{-}{}{}setup\{bib\discretionary{=}{=}{=}%
-\{\textit{file1},\textit{file2},\,\ldots\,\}\}} command, you can
-start citing the entries. This is just dummy text
-\parencite{borgman03} lightly sprinkled with citations
-\parencite[p.~123]{greenberg98}. Several sources can be cited at
-once: \cite{borgman03,greenberg98,thanh01}.
-\citetitle{greenberg98} was written by \citeauthor{greenberg98} in
-\citeyear{greenberg98}. We can also produce \textcite{greenberg98}%
-\ or %% Let us define a compound command:
-\def\citeauthoryear#1{(\textcite{#1},~\citeyear{#1})}%
-\citeauthoryear{greenberg98}%
-. The full bibliographic citation is:
-\emph{\fullcite{greenberg98}}. We can easily insert a bibliographic
-citation into the footnote\footfullcite{greenberg98}.
 
 \printbibliography[heading=bibintoc]
 
