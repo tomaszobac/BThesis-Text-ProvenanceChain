@@ -108,9 +108,11 @@
 \markright{\textsc{Introduction}}
 \addcontentsline{toc}{chapter}{Introduction}
 \shorthandoff{-}
-Provenance refers to the collective information about the history or origin of something, especially its ownership or location history. It is often used in contexts where it is essential to trace the history of an object, idea, or practice to establish its authenticity, origin, and how it was handled through time. For example, in literature, provenance can relate to the history of a manuscript or a book. Knowing who owned a rare manuscript, where it was kept, and how it was passed down through generations can shed light on its historical importance and authenticity.
+Provenance, a term of significant importance in both historical and digital contexts, denotes the collective information regarding the origin and history of an object, idea, or data. Its relevance becomes particularly pronounced when objects or data are distributed across multiple organizations, each holding only fragments of the entire provenance. Such distributed provenance poses a unique challenge, especially in scientific research, where data integrity, reliability, and reproducibility are paramount.
 
-In the digital realm, provenance refers to the documentation of the history of data, including its origins, processing, and storage. This is particularly significant, especially in fields such as scientific research, where tracking the origin and modifications of data ensures its reliability and reproducibility. Provenance is the term used to describe all the information and data referred to in the abovementioned examples. It is the collective name given to this type of data.
+Current research \cite{research} focuses on the complexities of handling this distributed provenance where research objects are passed between various organizations, and no single organization possesses complete provenance, leading to potential gaps in the data's history and authenticity. The outcome of this research is a concept of a provenance chain, where the provenance documented by each organization is linked together to form a cohesive, traversable chain. This thesis aims to implement a command line tool to navigate this provenance chain and retrieve information about the precursors or successors of an Entity from this chain. 
+
+The first chapter describes the PROV-DM data model and its representation through the PROV-N notation, developed by the World Wide Web Consortium (W3C) as part of their PROV standard. Furthermore, it describes the provenance chain and additional concepts tied to it. The second chapter delves into the overview of the implemented tool, follows with an insight into how the real-world environment is simulated and ends with an explanation of the provenance chain traversal. The third chapter describes the implementation's technicalities, structure, and execution, with the last chapter serving as a manual on how to set up and run the implemented tool.
 \shorthandon{-}
 
 \chapter{Provenance}
@@ -456,7 +458,15 @@ If the type is a backwardConnector, it means the method reached the end of the c
 
 If the type is neither, the method will search through the WasDerivedFrom statements in the current Bundle to find which connector is following in the traversal. It will then add this connector's identifier to the list of processed nodes and call the getPrecursors method with the current Document and the newly found connector's identifier. 
 
-After the runtime processes all Bundles in the chain and there are no more unprocessed connectors to enter, the traversal ends. The retrieved precursors are then printed on the command line, along with confirmation of the verified integrity of each Bundle. It should be mentioned that the implementation expects the chain to be correct, as the thesis supervisor stated that it should not focus on verification of whether the chain is cycled.
+After the runtime processes all Bundles in the chain and there are no more unprocessed connectors to enter, the traversal ends. The retrieved precursors are then printed on the command line, along with confirmation of the verified integrity of each Bundle. For an example, see Figure \ref{fig:precursor-run}. It should be mentioned that the implementation expects the chain to be correct, as the thesis supervisor stated that it should not focus on verification of whether the chain is cycled.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=12.5cm]{fithesis/images/precursor-run-slim.png}
+  \end{center}
+  \caption{Example of execution with the 'precursors' command}
+  \label{fig:precursor-run}
+\end{figure}
 
 \section{Problems during implementation}
 Four problems were encountered during the implementation due to using the ProvToolBox Java library. The first three problems arose from the simulation files, provided by the thesis supervisor, being generated using a Python library, which produced files with some notation differences. The first is that the Python library supports attributes with multiple values using parentheses, while the Java library needs each attribute to have only one value.
@@ -513,13 +523,10 @@ The last problem came from the fact that the ProvToolBox library, at the time of
 \chapter{Manual}
 \shorthandoff{-}
 \section{Set-up}
-To utilize the library, it is necessary to have Maven and Java properly configured. To simplify the process for users, the implementation is currently spread across multiple Git repositories, including two on FI and ICS GitLab sites and one on the author's personal GitHub page. To obtain the library, clone the repository or use the download button to retrieve the entire repository bundled in a zip or another archive file.
-
-\subsection{Retrieving the repository}
-In order to clone a repository, it is important to confirm that Git is installed on the device. Following this, proceed to the repository's page on GitLab or GitHub and locate the "Clone" button. A URL to copy will be generated by clicking on this button. Next, launch the terminal or command prompt, navigate to the directory where the repository should be stored, and execute the command 'git clone [URL]', replacing [URL] with the URL you copied earlier. Doing this will generate a local copy of the repository on the device. If cloning is not possible, an alternative is to download the repository as a ZIP file. On the repository's page, look for the "Download ZIP" option, typically found in the same section as the clone option. Clicking on this will download the repository's contents in a compressed file, which can then be extracted to the preferred location.
+To utilize the implemented tool, it is necessary to have Maven and Java properly configured. To simplify the process for users, the implementation is currently spread across multiple Git repositories, including two on FI \cite{provchain-fi} and ICS \cite{provchain-ics} GitLab sites and one on the author's personal GitHub page \cite{provchain-github}. To obtain the tool, clone the repository or use the download button to retrieve the entire repository bundled in a zip or another archive file.
 
 \subsection{Simulating the environment}
-The initiation of simulation files is the first step in simulating an environment, which requires the retrieval of specific files necessary for the simulated environment to function effectively. To achieve this, the cloned repository should be opened in the console. The submodule can be navigated by using the command.
+The initiation of simulation files is the first step in simulating the environment. It requires the retrieval of specific files necessary for the simulated environment to function effectively. To achieve this, a submodule in the repository must be initialized. Start by opening the cloned repository in a command line and navigating to the submodule's folder using the following command.
 
 \begin{verbatim}
 $ cd. \src\main\resources\bthesis-provenancechain-digpat  
@@ -551,7 +558,13 @@ To facilitate traversal simulation, the implementation employs several classes a
 \markright{\textsc{Conclusion}}
 \addcontentsline{toc}{chapter}{Conclusion}
 \shorthandoff{-}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer finibus commodo leo. Nullam blandit imperdiet magna, sit amet tempor tortor sagittis vitae. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras elementum diam vel eros tristique, at maximus tortor ultricies. Curabitur urna magna, dictum at porta rutrum, congue nec justo. Nam ac rhoncus lectus. Ut feugiat volutpat ornare. Mauris quis neque nec lorem vestibulum iaculis. Proin posuere nisi eget nisi tristique, eu tempus nibh ultricies.
+This thesis aims to develop and implement a command line tool for traversing provenance chains, beginning with an in-depth exploration of the provenance chains, PROV-DM data model, and PROV-N notation.
+
+The design and implementation phase of the project emphasized creating a modular, multi-component library with a user-friendly command-line interface. This approach ensured adaptability and ease of use. The usage of various libraries, such as ProvToolBox, GitLab4J API, and others, exemplified the seamless integration of different technologies to achieve the desired functionality. The execution walkthrough highlighted the dynamic interaction of various system components, demonstrating the implementation's practicality and robustness. The problems encountered during implementation, mainly related to the ProvToolBox Java library, provided valuable lessons in handling software limitations and incompatibilities.
+
+The accomplishment of this thesis is a successful implementation of a command line tool for provenance chain traversing, running on a set of pre-generated PROV-N files, effectively simulating a real-world environment. The modular design of the system and the insights gained from the challenges encountered offer a solid foundation for future enhancements and adaptations.
+
+For future research, several avenues can be explored. The scalability of the provenance chain traversal system in more complex and distributed environments warrants further investigation. Additionally, the integration of advanced security features to ensure the integrity and confidentiality of provenance data is an area that could yield significant benefits. Lastly, exploring the application of this system in different domains, such as healthcare or finance, could reveal new insights and use cases for provenance chain management.
 \shorthandon{-}
 
 \printbibliography[heading=bibintoc]
