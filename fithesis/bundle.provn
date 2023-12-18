@@ -1,0 +1,18 @@
+document
+  prefix prefix1 <prefix1_URI>
+
+  bundle prefix1:sampleBundle1.provn
+    prefix prefix1 <prefix1_URI>
+    prefix prefix2 <prefix2_URI>
+    prefix cpm <cpm_URI>
+
+    entity(prefix1:sampleConnector,[
+        prov:type=
+            'cpm:forwardConnector',
+        cpm:receiverBundleId=
+            'prefix2:sampleBundle2.provn',
+        cpm:receiverServiceUri=
+            "#URI#"
+    ])
+  endBundle
+endDocument

@@ -86,6 +86,7 @@
 \usepackage{markdown} %% Lightweight markup
 \usepackage{listings} %% Source code highlighting
 \usepackage{dirtree}
+\usepackage{fancyvrb}
 \lstset{
   basicstyle      = \ttfamily,
   identifierstyle = \color{black},
@@ -108,127 +109,129 @@
 \markright{\textsc{Introduction}}
 \addcontentsline{toc}{chapter}{Introduction}
 \shorthandoff{-}
-Provenance, a term of significant importance in both historical and digital contexts, denotes the collective information regarding the origin and history of an object, idea, or data. Its relevance becomes particularly pronounced when objects or data are distributed across multiple organizations, each holding only fragments of the entire provenance. Such distributed provenance poses a unique challenge, especially in scientific research, where data integrity, reliability, and reproducibility are paramount.
+Provenance, a term of significant importance in both historical and digital contexts, denotes the collective information regarding the origin and history of an object, idea, or data. Its relevance becomes particularly pronounced when objects or data are distributed across multiple organizations, each documenting only a part of its entire provenance. Such distributed provenance poses a unique challenge, especially in scientific research, where provenance can be used, for example, to verify the research's quality and reliability or to reproduce its results.
 
-Current research \cite{research} focuses on the complexities of handling this distributed provenance where research objects are passed between various organizations, and no single organization possesses complete provenance, leading to potential gaps in the data's history and authenticity. The outcome of this research is a concept of a provenance chain, where the provenance documented by each organization is linked together to form a cohesive, traversable chain. This thesis aims to implement a command line tool to navigate this provenance chain and retrieve information about the precursors or successors of an Entity from this chain. 
+Current research \cite{research} focuses on the complexities of handling this distributed provenance where research objects are passed between various organizations, and no single organization possesses complete provenance of exchanged objects, leading to potential gaps in the research object's history and authenticity. The outcome of this research is a concept of a provenance chain, where the provenance documented by each organization is linked together to form a cohesive, traversable chain. This thesis aims to implement a command line tool to navigate these provenance chains and retrieve information about the precursors or successors of an object represented by an Entity from this chain. 
 
-The first chapter describes the PROV-DM data model and its representation through the PROV-N notation, developed by the World Wide Web Consortium (W3C) as part of their PROV standard. Furthermore, it describes the provenance chain and additional concepts tied to it. The second chapter delves into the overview of the implemented tool, follows with an insight into how the real-world environment is simulated and ends with an explanation of the provenance chain traversal. The third chapter describes the implementation's technicalities, structure, and execution, with the last chapter serving as a manual on how to set up and run the implemented tool.
+The first chapter describes the PROV-DM data model for provenance information representation and its expression through the PROV-N notation, developed by the World Wide Web Consortium (W3C). Furthermore, it describes the provenance chain and additional concepts tied to it. The second chapter delves into the design of the implemented tool, follows with an insight into how the real-world environment is simulated, and ends with an explanation of the provenance chain traversal. The third chapter describes the implementation's technicalities, structure, and execution, with the last chapter serving as a manual on how to set up and run the implemented tool.
 \shorthandon{-}
 
 \chapter{Provenance}
-This chapter begins by delving into the PROV-DM standard developed by the World Wide Web Consortium (W3C), offering insights into how provenance information is represented, organized, and utilized in a digital environment. The chapter introduces PROV-N, a notation for expressing provenance data, illustrating its structure and application with practical examples. After this, it introduces the concept of a provenance chain and provides an example of real-world application in medical research. The chapter concludes by introducing additional concepts of meta-provenance and resolution of persistent identification, all central to this thesis.
-
-The thorough examination of provenance in this chapter aims to equip readers with the necessary background and context fundamental for understanding the subsequent design and implementation of provenance chain traversal.
+This chapter begins by delving into the PROV-DM data model developed by the World Wide Web Consortium (W3C), offering insights into how provenance information is represented, organized, and utilized in a digital environment. The chapter introduces PROV-N, a notation for expressing provenance data, illustrating its structure and application with practical examples. After this, it introduces the concept of a provenance chain and provides an example of real-world application in medical research. The chapter concludes by introducing additional concepts of meta-provenance and resolution of persistent identification, all central to this thesis.
 
 \section{PROV-DM} \label{provdm}
 \shorthandoff{-}
-In order to enable the inter-operable interchange of provenance information, the W3C PROV-DM (Provenance Data Model) standard was created. The PROV-DM represents provenance as a directed graph through nodes and edges.
+The W3C PROV-DM (Provenance Data Model) standard \cite{provdm} was created to enable the inter-operable interchange of provenance information. The PROV-DM represents provenance as a directed graph. 
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=12.5cm]{fithesis/images/provdm-basics.png}
+    \includegraphics[width=10cm]{fithesis/images/provdm-basics.png}
   \end{center}
   \caption{High level overview of the structure of PROV records \cite{provdm-basics}}
   \label{fig:provdm-basics}
 \end{figure}
 
-Nodes in this graph represent Entities, Activities, and Agents. Entities represent physical, digital, or other objects central to or associated with the provenance. Activities represent actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities. Additionally, each node has a unique identifier, which identifies it in the current provenance graph. The identifier is a QualifiedName, which consists of the name of the object it refers to and a namespace that categorizes or contains it.
+Nodes in a provenance graph represent three types of objects that can be expressed in provenance: Entities, Activities, and Agents. Entities represent snapshots of physical, digital, or other objects central to or associated with the provenance, taken at a concrete point in time. Activities represent actions and processes conducted on or with these entities. Agents are the nodes that perform activities, effectively creating or influencing entities and activities. The edges in a provenance graph represent the relations between these nodes, with examples being 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used.' Both nodes and edges can be referred to as provenance structures. Each provenance structure has properties the model defines, attributes the user defines, and a unique identifier, which identifies it in the current provenance graph. The identifier is a QualifiedName, which consists of the name of the object it refers to, a namespace that categorizes or contains it, and an optional prefix to represent the namespace more concisely. The PROV-DM supports extensions of its base model, with the users being able to define new types of nodes and edges and add custom attributes; this enhances the flexibility of the PROV-DM.
 
-The edges in this graph represent the relations between these nodes. Examples include 'wasDerivedFrom,' 'wasGeneratedBy,' and 'used,' which help map out the model's interactions. Additionally, the flexibility of PROV-DM is enhanced through its extension support, with the users being able to define new types of nodes and edges and add custom attributes.
-
-Moreover, the PROV-DM standard includes a concept known as Bundles, which are used to group sets of provenance information. This addition allows for an organized representation of provenance data, enhancing the model's capability to be easily shared and processed. Same as with the nodes in the graph, a Bundle also has a QualifiedName identifier, which allows it to be represented in a provenance as an Entity, effectively allowing the creation of a provenance of a provenance.
+Moreover, the PROV-DM standard includes a concept known as Bundles, which are used to group sets of provenance structures. Like other provenance structures, a Bundle also has a QualifiedName identifier, which allows it to be represented in a provenance as an Entity, effectively allowing the creation of a provenance of a provenance.
 \shorthandon{-}
 
 \subsection{PROV-N}
 \shorthandoff{-}
-PROV-N is a component of the W3C PROV suite, designed to represent PROV-DM in a human-readable textual format. This format organizes provenance information into three main sections: namespace declarations, statements, and bundles. 
+PROV-N \cite{provn} is a component of the W3C PROV suite, designed to represent PROV-DM in a human-readable textual format, using files with .provn extension. Each PROV-N file contains a single Document organized into three main sections: namespace declarations, statements, and bundles. A PROV-N document, with declared namespaces and a bundle encapsulating its statements, could look like this snippet: 
 
-Namespace declarations shorten the QualifiedName identificators by specifying a shorthand prefix to a longer namespace URI at the beginning of each Document and Bundle. For instance, a QualifiedName with a specified prefix may look like "prefix1:sampleConnector." Namespaces are declared as follows:
-
-\begin{verbatim}
-
-prefix prefix1 <prefix1_URI>
-prefix prefix2 <prefix2_URI>
-
-\end{verbatim}
-
-Statements in PROV-N represent nodes and edges in the provenance graph. For example, an entity might be described as \\entity(prefix1:sampleConnector) with attributes detailing its characteristics:
-
-\begin{verbatim}
-
-entity(prefix1:sampleConnector, [
-    prov:type=
-        'cpm:forwardConnector', 
-    cpm:receiverBundleId=
-        'prefix2:sampleBundle2.provn', 
-    cpm:receiverServiceUri=
-        "#URI#"
-    ])
-    
-\end{verbatim}
-
-After the application of the examples above, the finished PROV-N document, with declared namespaces and a bundle encapsulating its statements, could look like this example:
-
-\begin{verbatim}
-
+\begin{center}
+\begin{lstlisting}[numbers=left,
+    stepnumber=1,
+    tabsize=4,
+    breaklines=true,
+    breakatwhitespace=false,
+    xleftmargin=3.5em
+    ]
 document
   prefix prefix1 <prefix1_URI>
 
-  bundle prefix1:sampleBundle1.provn
+  bundle prefix1:sampleBundle.provn
     prefix prefix1 <prefix1_URI>
-    prefix prefix2 <prefix2_URI>
-    prefix cpm <cpm_URI>
+    prefix dct <dct_URI>
 
-    entity(prefix1:sampleConnector,[
-        prov:type=
-            'cpm:forwardConnector',
-        cpm:receiverBundleId=
-            'prefix2:sampleBundle2.provn',
-        cpm:receiverServiceUri=
-            "#URI#"
+    entity(prefix1:entity1,[
+        prov:type='image',
+        dct:format='jpeg',
     ])
   endBundle
 endDocument
+\end{lstlisting}
+\end{center}
 
+Namespace declarations (lines 2, 5, and 6 of the snippet) are a technical means to define qualified names in PROV-N Documents. They shorten the QualifiedName identifiers by specifying a shorthand prefix to a longer namespace URI at the beginning of each Document and Bundle. For instance, a QualifiedName of the Entity from the snippet (line 8) will look as follows:
+
+\begin{verbatim}
+
+    prefix1:{{prefix1_URI}}entity1
+    
 \end{verbatim}
+
+Statements represent provenance structures. For example, the Entity from the snippet (line 8 of the snippet) is described as "entity(QualifiedName identifier)" with property (line 9 of the snippet) specifying that the documented object is an image and attribute (line 10 of the snippet) detailing its characteristics.
+
+Bundles (line 4 of the snippet) are optional functionality for grouping provenance structures. Provenance structures can be defined outside or inside of a Bundle, but Bundles themselves cannot be folded into each other. Because the QualifiedName of the Bundle from the snippet contains the prefix "prefix1", it must also be declared outside of the Bundle (line 2 of the snippet).
 \shorthandon{-}
 
 \section{Provenance chain} \label{s-provchain}
 \shorthandoff{-}
-The provenance chain is a sequence of interconnected Bundles, each encapsulating a graph consisting of two types of information. The first is a provenance backbone, a part of the Bundle's graph with a pre-defined structure used to establish connections within and between Bundles. The second information type is a domain-specific part of the graph. This thesis will work only with the provenance backbone. 
+The provenance chain is defined in the Common Provenance Model \cite{cpm}, an extension of the PROV-DM for distributed environments. It is defined as a sequence of interconnected Bundles, each encapsulating a graph consisting of two parts. The first part is a provenance backbone, a part of the Bundle's graph that serves as a guide for traversing provenance chains; it contains information about the graph in the given Bundle and establishes connections within and between Bundles. Each Bundle in the provenance chain refers to an activity that takes inputs and produces outputs. Backbone has a pre-defined structure for mapping these inputs to outputs. Therefore, the content of the backbone is not dependent on what specific type of activity is documented.
 
-The provenance backbone, as can be seen in \ref{fig:bundleconnection} comprises three types of Entities: backwardConnector, currentConnector, and forwardConnector. These Entities are related to each other through the wasDerivedFrom derivation. 
+The second part is a domain-specific part of the graph. It is a more detailed description of the activity documented in the Bundle; it gives more detailed information compared to what is stored on the backbone. Provenance backbone and domain-specific information are linked in a contiguous graph in a defined way, which is out of the scope of this thesis. This thesis will work only with a part of the provenance backbone relevant to it.
 
-The backwardConnector represents a reference to the previous Bundle in the chain, where it links to a forwardConnector with the same identifier. Its content represents the documented object at the time it was sent from the previous Bundle.
-
-The currentConnector, derived from the backwardConnector, represents a reference to the current Bundle. Its content represents the documented object at the time the current Bundle received it.
-
-The forwardConnector, derived from the currentConnector, represents a reference to the succeeding Bundle in the chain, where it links to a backwardConnector with the same identifier. Its content represents the documented object at the time it was sent from the current Bundle.
-
-If graphs of two succeeding Bundles were to merge, the point of connection of these graphs would be their linked forwardConnector and backwardConnector, both representing the documented object at the same time instant. \cite{provchain}
+The provenance backbone, as shown in Figure \ref{fig:bundleconnection}, comprises three types of Entities: backwardConnector, currentConnector, and forwardConnector. These Entities are related to each other through the WasDerivedFrom derivation.  
 
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[width=12.5cm]{fithesis/images/backbone.png}
   \end{center}
-  \caption{Connection of two provenance bundles}
+  \caption{Example of a provenance backbone}
   \label{fig:bundleconnection}
 \end{figure}
 
-While the example simplifies the structure, it is important to note that, in practice, a single bundle can contain multiple connectors of the same type. This multiplicity allows connections to more than one Bundle on either side of the provenance backbone, thereby accommodating complex provenance scenarios.
+The backwardConnector represents the documented object at the time it was sent from the sender to the receiver and references the previous Bundle in the chain, where it links to a forwardConnector with the same identifier.
+
+The currentConnector, derived from the backwardConnector, represents the documented object at the time the receiver Bundle received it and references the current Bundle.
+
+The forwardConnector, derived from the currentConnector, represents the documented object at the time it was sent from the current Bundle and references the succeeding Bundle in the chain, where it links to a backwardConnector with the same identifier. If graphs of two succeeding Bundles were to merge, the point of connection of these graphs would be their linked forwardConnector and backwardConnector, both representing the documented object at the same time instant.
+
+The end of the provenance chain can be recognized by connectors missing from a Bundle's backbone. A Bundle missing the backwardConnector and currentConnector represents a starting point in the provenance chain, while a Bundle missing the forwardConnector represents the endpoint. \cite{provchain}
+
+While the example from Figure \ref{fig:bundleconnection} simplifies the structure, in practice, a single bundle can contain multiple connectors of the same type. This multiplicity allows connections to more than one Bundle on either side of the provenance backbone, thereby accommodating complex provenance scenarios.
+
 \shorthandon{-}
 
 \section{Real-world distribution}
-The provenance chain is meant to be used in a distributed environment, meaning the whole provenance chain is distributed across multiple companies and that one or more Bundles from the chain represent a company's processing of the provenance's object, effectively documenting its complete lifecycle. An example of this would be the collection of a biological sample from a person and its subsequent processing. The first Bundle in such a chain would represent the collection center and document information such as who and how collected the sample or from whom it was collected. It would then be linked to a succeeding Bundle in the chain, representing the research center where the sample was sent. Following this formula, the whole lifecycle of the sample would be documented, making its history traceable for future verification or measurement replication.
+The provenance chain is meant to be used in a multi-organizational distributed environment, meaning the bundles of a provenance chain are distributed across multiple companies and that one or more Bundles from the chain represent a company's processing of the provenance's object, effectively documenting its complete lifecycle.
+
+\label{t-aiexample} This thesis works with an example of a provenance chain consisting of six Bundles, documenting a process of training an AI model to detect tumors on images of prostate tissue. Each Bundle from this provenance chain documents part of the process. The first Bundle documents the collection of a sample. The second Bundle documents the diagnosis and data generation. After this, the chain branches out as the third Bundle documents the storage of the sample in a biobank, while the chain continues into the fourth Bundle, documenting the preprocessing of the generated data for AI model training. The fifth Bundle documents the process of the AI model training, and the last Bundle documents the testing of the trained AI model. See the Running example section in \cite{research} for more details.
 
 \section{Additional concepts}
 Additional concepts were developed in order to address issues that tie to the usage of the provenance chain in a distributed environment. One such issue is how to account for versioning of Bundles in the chain. To address it, the meta-provenance is used. Meta-provenance is a Bundle that keeps provenance, like the current version and its hashes, about the Bundles, ensuring that each one links to the correct version of the succeeding Bundles. \cite{metaprov}
 
-Another issue emerged from the fact that the links pointing to Bundles in the chain can change, for example, due to changes in different versions of a Bundle. To mitigate this issue, persistent identification (PID) is used. The PID guarantees that the link to the Bundle will always be valid. This is accomplished by the PID service assigning a unique identification for the passed link and returning it to the user, who can then resolve this identification into the original link. If the original link is not valid anymore, the returned identification is assigned to the new valid link, ensuring the user always has access to the linked Bundle.
+Another concept is the usage of persistent identification (PID). 
+The PID \cite{pid} is:
 
-The last concept is a navigational table, which is used to store and retrieve the created PIDs. A row in this table represents a single connector Entity, and each connector Entity in each Bundle can have its own navigational table. A row in this table consists of four cells. The first cell is the identification of the Entity. The second cell is the type of connector the Entity is. The third cell identifies a Bundle to which the Entity points and the last cell identifies meta-provenance containing the pointed Bundle.
+\begin{enumerate}
+    \item Globally unique, meaning that it is distinct and distinguishable from all other identifiers across the globe, with no two entities having the same PID.
+    \item Persistent, meaning that it ensures that the link to the data or resource remains constant over time, regardless of any changes.
+    \item Resolvable, meaning that the PID can be used to locate and access the resource it identifies.
+\end{enumerate}
 
-These three concepts allow the provenance chain to work in a distributed environment and are also used in the implementation.
+PID management is usually performed by an external service, where users can register new PIDs by defining what the PID will resolve into. In the case of provenance chains, the PID resolves into a quartet of values:
+
+\begin{enumerate}
+    \item Entity ID
+    \item Connector type of the Entity
+    \item ID of a Bundle referenced by the Entity
+    \item ID of meta-provenance containing the referenced Bundle
+\end{enumerate}
+
+The goal of the PID in provenance chains is to support the validity of the connector identifiers in the long term, i.e., that the links to the other bundles and related information are not deprecated. 
 
 
 \chapter{Design}
@@ -237,7 +240,7 @@ This chapter delves into the architecture and logic of the command line tool and
 \shorthandon{-}
 
 \section{Overview}
-Thanks to its command line interface, the implementation allows users to perform different operations by entering their associated commands. The main operation is to provide the user with the ability to retrieve precursors or successors of an Entity in a provenance chain. The secondary operation is to retrieve the precursors or successors together with the main activity of their Bundles. The additional operations are to print this implementation's navigational table and to resolve data for an Entity from the mentioned table.
+Thanks to its command line interface, the implementation allows users to perform different operations by entering their associated commands. The main operation is to provide the user with the ability to retrieve precursors or successors of an Entity in a provenance chain. \ref{t-aiexample} The secondary operation is to retrieve the precursors or successors together with the main activity of their Bundles. The additional operations are to print this implementation's navigational table and to resolve data for an Entity from the mentioned table.
 
 A bonus feature of the implemented command line interface is that it serves as a code reference for anyone who wants to use one or more library components for their project. By looking at the code of the interface, any interested party can gain insight into how and where to initialize and use the library's components for their intended results.
 
