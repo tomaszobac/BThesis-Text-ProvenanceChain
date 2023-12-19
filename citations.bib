@@ -88,19 +88,8 @@
 @ARTICLE{provchain,
   author   = {Rudolf Wittner and Matej Gallo and Simone Leo and Cecilia Mascia and Francesca Frexia and Markus Plass and Stian Soiland-Reyes and Heimo Müller and Jörg Geiger and Petr Holub},
   title    = {Linking provenance and its metadata in multi-organizational environments of life sciences},
-  subtitle = {Distributed Provenance Information \& CPM},
   date     = {2023},
-  url      = {https://s11.no/2023/phd/linking-provenance/#distributed-provenance-information--cpm},
-  urldate  = {2023-12-14},
-  langid   = {english}
-}
-
-@ARTICLE{metaprov,
-  author   = {Rudolf Wittner and Matej Gallo and Simone Leo and Cecilia Mascia and Francesca Frexia and Markus Plass and Stian Soiland-Reyes and Heimo Müller and Jörg Geiger and Petr Holub},
-  title    = {Linking provenance and its metadata in multi-organizational environments of life sciences},
-  subtitle = {Versioning of Distributed Provenance in CPM},
-  date     = {2023},
-  url      = {https://s11.no/2023/phd/linking-provenance/#versioning-of-distributed-provenance-in-cpm},
+  url      = {https://s11.no/2023/phd/linking-provenance/},
   urldate  = {2023-12-14},
   langid   = {english}
 }
@@ -147,7 +136,7 @@
 }
 
 @ARTICLE{cpm,
-  author       = {Rudolf Wittner and Cecilia Mascia and Matej Gallo and Francesca Frexia and Heimo Müller and Markus Plass and Jörg Geiger and Petr Holub},
+  author       = {Francesca Frexia and Cecilia Mascia and Rudolf Wittner and Markus Plass and Heimo Müller and Jörg Geiger and Petr Holub},
   title        = {The Common Provenance Model: Capturing Distributed Provenance in Life Sciences Processes},
   journal      = {Studies in health technology and informatics},
   date         = {2022},
@@ -157,10 +146,61 @@
   langid       = {english}
 }
 
-@BOOK{pid,
-  author       = {European Commission and Directorate-General for Research and Innovation and Hellström, M and Heughebaert, A and Kotarski, R and Manghi, P and Matthews, B and Ritz, R and Sparre Conrad, A and Valle, M and Weigel, T and Wittenburg, P},
-  title        = {A Persistent Identifier (PID) policy for the European Open Science Cloud (EOSC)},
-  publisher    = {Publications Office},
-  year         = {2020},
-  doi          = {https://doi.org/10.2777/926037}
+@Misc{pid,
+  key		      = {EOSC-PID},
+  author        = {Hellström, Maggie and Heughebaert, André and Kotarski, Rachael and  Manghi, Paolo and  Matthews, Brian and  Ritz, Raphael and  Sparre Conrad, Anders and  Valle, Mrio and  Weigel, Tobias and  Wittenburg, Peter},
+  howpublished  = {\url{https://op.europa.eu/en/publication-detail/-/publication/35c5ca10-1417-11eb-b57e-01aa75ed71a1}},
+  title		  = {A Persistent Identifier {(PID)} policy for the European Open Science Cloud (EOSC)},
+  year		  = 2020,
+  doi           = {https://doi.org/10.2777/926037}
+}
+
+@misc{preprint,
+author = {Wittner, Rudolf
+and Gallo, Matej
+and Leo, Simone
+and Mascia, Cecilia
+and Frexia, Francesca
+and Plass, Markus
+and Soiland-Reyes, Stian 
+and M{\"u}ller, Heimo
+and Geiger, J{\"o}rg
+and Holub, Petr},
+year = {2023},
+howpublished = {\url{https://s11.no/2023/phd/linking-provenance/}},
+title = {Preprint: Linking provenance and its metadata in multi-organizational environments of life sciences}
+}
+
+@inproceedings{provquality,
+  title={Data provenance--the foundation of data quality},
+  author={Buneman, Peter and Davidson, Susan B},
+  booktitle={Workshop: Issues and Opportunities for Improving the Quality and Use of Data within the DoD, Arlington, USA},
+  pages={26--28},
+  year={2010}
+}
+
+@article{provreproduce,
+title = {Provenance-based reproducibility in the Semantic Web},
+journal = {Journal of Web Semantics},
+volume = {9},
+number = {2},
+pages = {202-221},
+year = {2011},
+note = {Provenance in the Semantic Web},
+issn = {1570-8268},
+doi = {https://doi.org/10.1016/j.websem.2011.03.001},
+url = {https://www.sciencedirect.com/science/article/pii/S1570826811000163},
+author = {Luc Moreau},
+keywords = {Provenance, Reproducibility, Denotational semantics, Primitive environment},
+abstract = {Reproducibility is a crucial property of data since it allows users to understand and verify how data were derived, and therefore allows them to put their trust in such data. Reproducibility is essential for science, because the reproducibility of experimental results is a tenet of the scientific method, but reproducibility is also beneficial in many other fields, including automated decision making, visualization, and automated data feeds. To achieve the vision of reproducibility, the workflow-based community has strongly advocated the use of provenance as an underpinning mechanism for reproducibility, since a rich representation of provenance allows steps to be reproduced and all intermediary and final results checked and validated. Concurrently, multiple ontology-based representations of provenance have been devised, to be able to describe past computations, uniformly across a variety of technologies. However, such Semantic Web representations of provenance do not have any formal link with execution. Even assuming a faithful and non-malicious environment, how can we claim that an ontology-based representation of provenance enables reproducibility, since it has not been given any execution semantics, and therefore has no formal way of expressing the reproduction of computations? This is the problem that this paper tackles by defining a denotational semantics for the Open Provenance Model, which is referred to as the reproducibility semantics. This semantics is used to implement a reproducibility service, leveraging multiple Semantic Web technologies, and offering a variety of reproducibility approaches, found in the literature. A series of empirical experiments were designed to exhibit the range of reproducibility capabilities of our approach; in particular, we demonstrate the ability to reproduce computations involving multiple technologies, as is commonly found on the Web.}
+}
+
+@ONLINE{provchain-files,
+  author    = {Rudolf Wittner},
+  publisher = {GitLab},
+  title     = {BThesis-ProvenanceChain-DigPat},
+  date      = {2023},
+  url       = {https://gitlab.ics.muni.cz/492601/bthesis-provenancechain-digpat},
+  urldate   = {2023-12-16},
+  langid    = {english}
 }
